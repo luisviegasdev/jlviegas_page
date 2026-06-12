@@ -14,7 +14,7 @@ export function TheMechanism() {
     >
       <Reveal>
         <div className="grid gap-6 md:grid-cols-12 md:items-end">
-          <h2 className="font-display text-[clamp(2.4rem,6vw,5.5rem)] uppercase leading-none tracking-[-0.03em] md:col-span-7">
+          <h2 className="font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold uppercase leading-none tracking-[-0.03em] md:col-span-7">
             {mechanism.heading[locale]}
           </h2>
           <p className="max-w-md text-body-lg text-muted-foreground md:col-span-5 md:justify-self-end md:text-right">

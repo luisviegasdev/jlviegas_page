@@ -11,7 +11,7 @@ export function TechnicalOverview() {
     <section className="border-b border-border px-5 pt-20 pb-16 md:px-10 md:pt-28 md:pb-24">
       <Reveal>
         <div className="grid gap-6 md:grid-cols-12 md:items-end">
-          <h1 className="font-display text-[clamp(2.8rem,7.5vw,7rem)] uppercase leading-[0.95] tracking-[-0.03em] md:col-span-7">
+          <h1 className="font-display text-[clamp(2.8rem,7.5vw,7rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em] md:col-span-7">
             {servicesPage.overview.heading[locale]}
           </h1>
           <p className="max-w-md text-body-lg text-muted-foreground md:col-span-5 md:justify-self-end md:text-right">

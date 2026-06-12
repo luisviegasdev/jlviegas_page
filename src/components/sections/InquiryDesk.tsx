@@ -54,7 +54,7 @@ export function InquiryDesk() {
     <section className="px-5 pt-20 pb-20 md:px-10 md:pt-28 md:pb-28">
       <div className="grid gap-12 md:grid-cols-12">
         <Reveal className="md:col-span-5">
-          <h1 className="max-w-[12ch] font-display text-[clamp(2.8rem,7vw,6.5rem)] uppercase leading-[0.95] tracking-[-0.03em]">
+          <h1 className="max-w-[12ch] font-display text-[clamp(2.8rem,7vw,6.5rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em]">
             {contact.heading[locale]}
           </h1>
           <p className="mt-8 max-w-md text-body-lg text-muted-foreground">

@@ -11,7 +11,7 @@ export function SelectedSystems() {
     <section id="works" className="scroll-mt-16 px-5 py-20 md:px-10 md:py-28">
       <Reveal>
         <div className="grid gap-6 md:grid-cols-12 md:items-end">
-          <h2 className="font-display text-[clamp(2.4rem,6vw,5.5rem)] uppercase leading-none tracking-[-0.03em] md:col-span-7">
+          <h2 className="font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold uppercase leading-none tracking-[-0.03em] md:col-span-7">
             {works.heading[locale]}
           </h2>
           <p className="max-w-md text-body-lg text-muted-foreground md:col-span-5 md:justify-self-end md:text-right">

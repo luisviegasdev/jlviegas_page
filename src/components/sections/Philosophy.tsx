@@ -10,7 +10,7 @@ export function Philosophy() {
   return (
     <section className="border-b border-border px-5 pt-20 pb-16 md:px-10 md:pt-28 md:pb-24">
       <Reveal>
-        <h1 className="max-w-[16ch] font-display text-[clamp(2.8rem,7.5vw,7rem)] uppercase leading-[0.95] tracking-[-0.03em]">
+        <h1 className="max-w-[16ch] font-display text-[clamp(2.8rem,7.5vw,7rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em]">
           {about.philosophy.heading[locale]}
         </h1>
       </Reveal>

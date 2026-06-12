@@ -14,7 +14,7 @@ export function CoreEngineering() {
           <p className="max-w-md text-body-lg text-muted-foreground md:order-1 md:col-span-5">
             {services.subheading[locale]}
           </p>
-          <h2 className="font-display text-[clamp(2.4rem,6vw,5.5rem)] uppercase leading-none tracking-[-0.03em] md:order-2 md:col-span-7 md:text-right">
+          <h2 className="font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold uppercase leading-none tracking-[-0.03em] md:order-2 md:col-span-7 md:text-right">
             {services.heading[locale]}
           </h2>
         </div>

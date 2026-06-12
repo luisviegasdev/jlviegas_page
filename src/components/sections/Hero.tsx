@@ -19,7 +19,7 @@ export function Hero() {
       </LoadReveal>
 
       <LoadReveal delay={0.1}>
-        <h1 className="mt-8 max-w-[18ch] font-display text-[clamp(3.2rem,9vw,8.5rem)] uppercase leading-[0.92] tracking-[-0.04em]">
+        <h1 className="mt-8 max-w-[18ch] font-display text-[clamp(3.4rem,11.5vw,11rem)] font-bold uppercase leading-[0.92] tracking-[-0.04em]">
           {hero.headline[locale]}
         </h1>
       </LoadReveal>
