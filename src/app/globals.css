@@ -113,3 +113,31 @@
     color: var(--accent-foreground);
   }
 }
+
+/* Per-char link hover wave (see src/components/WaveLink.tsx).
+   rotateX without perspective reads as a vertical shrink/grow blink. */
+@keyframes char-blink {
+  0% {
+    transform: rotateX(0deg);
+  }
+  49.99% {
+    transform: rotateX(90deg);
+  }
+  50% {
+    transform: rotateX(-90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@layer components {
+  .char-blink {
+    animation: char-blink 450ms cubic-bezier(0.45, 0, 0.55, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .char-blink {
+      animation: none;
+    }
+  }
+}

@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { LoadReveal } from "@/components/motion";
 import { Button } from "@/components/ui/button";
+import { WaveLink } from "@/components/WaveLink";
 import { hero } from "@/lib/content";
 import { useLocale } from "@/lib/locale-context";
 
@@ -35,12 +36,11 @@ export function Hero() {
                 {hero.primaryCta.label[locale]}
               </Link>
             </Button>
-            <Link
+            <WaveLink
               href={hero.secondaryCta.href}
-              className="text-sm underline decoration-border underline-offset-8 transition-colors hover:text-accent hover:decoration-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
-            >
-              {hero.secondaryCta.label[locale]}
-            </Link>
+              label={hero.secondaryCta.label[locale]}
+              className="border-b border-border pb-2 text-sm transition-colors hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
+            />
           </div>
         </LoadReveal>
       </div>

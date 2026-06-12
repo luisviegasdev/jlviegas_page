@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-
+import { WaveLink } from "@/components/WaveLink";
 import { footer } from "@/lib/content";
 import { useLocale } from "@/lib/locale-context";
 
@@ -32,9 +31,11 @@ export function Footer() {
           <ul className="mt-5 flex flex-col gap-3">
             {footer.directory.links.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className={linkClass}>
-                  {link.label[locale]}
-                </Link>
+                <WaveLink
+                  href={link.href}
+                  label={link.label[locale]}
+                  className={linkClass}
+                />
               </li>
             ))}
           </ul>
@@ -50,14 +51,11 @@ export function Footer() {
           <ul className="mt-5 flex flex-col gap-3">
             {footer.protocol.links.map((link) => (
               <li key={link.label.en}>
-                <a
+                <WaveLink
                   href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  label={link.label[locale]}
                   className={linkClass}
-                >
-                  {link.label[locale]}
-                </a>
+                />
               </li>
             ))}
           </ul>
@@ -71,12 +69,11 @@ export function Footer() {
         <ul className="flex items-center gap-6">
           {footer.legalLinks.map((link) => (
             <li key={link.label.en}>
-              <Link
+              <WaveLink
                 href={link.href}
+                label={link.label[locale]}
                 className="text-xs text-primary-foreground/50 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
-              >
-                {link.label[locale]}
-              </Link>
+              />
             </li>
           ))}
         </ul>

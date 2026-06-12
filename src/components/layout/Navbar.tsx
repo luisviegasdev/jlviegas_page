@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { WaveLink } from '@/components/WaveLink';
 import {
 	Sheet,
 	SheetContent,
@@ -24,7 +25,7 @@ function LocaleSwitch({ className }: { className?: string }) {
 		<div
 			role="group"
 			aria-label="Language / Idioma"
-			className={cn('flex items-center gap-1 font-mono text-xs', className)}
+			className={cn('flex items-center gap-1 font-display text-s', className)}
 		>
 			{options.map((option, i) => (
 				<span key={option} className="flex items-center gap-1">
@@ -38,7 +39,7 @@ function LocaleSwitch({ className }: { className?: string }) {
 						onClick={() => setLocale(option)}
 						aria-pressed={locale === option}
 						className={cn(
-							'px-1 py-1 uppercase tracking-[0.15em] transition-colors',
+							'px-1 py-1 cursor-pointer uppercase tracking-[0.15em] transition-colors',
 							'hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent',
 							locale === option ? 'text-foreground' : 'text-muted-foreground',
 						)}
@@ -74,23 +75,21 @@ export function Navbar() {
 		>
 			<nav className="flex h-16 items-center justify-between px-5 md:px-10">
 				{/* TODO: replace wordmark with public/images/logo.svg when provided */}
-				<Link
+				<WaveLink
 					href="/"
+					label="Lumo"
 					className="font-display text-3xl font-bold uppercase leading-none tracking-tight transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
-				>
-					Lumo
-				</Link>
+				/>
 
 				<div className="hidden items-center gap-8 md:flex">
 					<ul className="flex items-center gap-6">
 						{nav.items.map((item) => (
 							<li key={item.href}>
-								<Link
+								<WaveLink
 									href={item.href}
-									className="font-display text-xs uppercase tracking-[0.15em] text-muted-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
-								>
-									{item.label[locale]}
-								</Link>
+									label={item.label[locale]}
+									className="font-display text-base uppercase tracking-[0.15em] text-muted-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
+								/>
 							</li>
 						))}
 					</ul>
@@ -117,13 +116,12 @@ export function Navbar() {
 							<ul className="flex flex-col gap-1 px-4">
 								{nav.items.map((item) => (
 									<li key={item.href} className="border-b border-border">
-										<Link
+										<WaveLink
 											href={item.href}
+											label={item.label[locale]}
 											onClick={() => setOpen(false)}
 											className="block py-4 font-display text-h3 uppercase transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
-										>
-											{item.label[locale]}
-										</Link>
+										/>
 									</li>
 								))}
 							</ul>
