@@ -1,0 +1,35 @@
+<svg width="800" height="1000" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Portrait placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E9E8E3"/>
+      <stop offset="1" stop-color="#D8D6D0"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.06"/></feComponentTransfer>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#bg)"/>
+
+  <!-- tone-on-tone figure -->
+  <g fill="#C7C5BE">
+    <circle cx="400" cy="430" r="150"/>
+    <path d="M170 1000 C170 760 270 650 400 650 C530 650 630 760 630 1000 Z"/>
+  </g>
+
+  <!-- grain overlay -->
+  <rect width="800" height="1000" filter="url(#grain)" opacity="0.5"/>
+
+  <!-- corner registration marks -->
+  <g stroke="#575757" stroke-width="2">
+    <path d="M40 40 H80 M40 40 V80"/>
+    <path d="M760 40 H720 M760 40 V80"/>
+    <path d="M40 960 H80 M40 960 V920"/>
+    <path d="M760 960 H720 M760 960 V920"/>
+  </g>
+
+  <text x="40" y="930" font-family="monospace" font-size="22" letter-spacing="3" fill="#575757">PORTRAIT — LV</text>
+</svg>

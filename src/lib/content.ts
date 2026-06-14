@@ -29,6 +29,12 @@ export const nav = {
 } as const;
 
 export const hero = {
+	// Giant edge-to-edge wordmark anchored at the bottom of the hero.
+	name: "Luis Viegas",
+	caption: {
+		en: "Full-Stack Architect & Digital Art Director",
+		pt: "Arquiteto Full-Stack e Diretor de Arte Digital",
+	},
 	eyebrow: {
 		en: "Lumo — Digital Architecture & Development Hub",
 		pt: "Lumo — Hub de Arquitetura e Desenvolvimento Digital",
