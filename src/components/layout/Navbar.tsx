@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { WaveLink } from '@/components/WaveLink';
 import {
 	Sheet,
 	SheetContent,
@@ -13,6 +12,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/ui/sheet';
+import { WaveLink } from '@/components/WaveLink';
 import { nav } from '@/lib/content';
 import { useLocale } from '@/lib/locale-context';
 import { cn } from '@/lib/utils';
@@ -25,7 +25,7 @@ function LocaleSwitch({ className }: { className?: string }) {
 		<div
 			role="group"
 			aria-label="Language / Idioma"
-			className={cn('flex items-center gap-1 font-display text-s', className)}
+			className={cn('flex items-center gap-1 font-display text-xs', className)}
 		>
 			{options.map((option, i) => (
 				<span key={option} className="flex items-center gap-1">
@@ -73,7 +73,7 @@ export function Navbar() {
 					: 'border-transparent bg-transparent',
 			)}
 		>
-			<nav className="flex h-16 items-center justify-between px-5 md:px-10">
+			<nav className="relative flex h-16 items-center justify-between px-5 md:px-10">
 				{/* TODO: replace wordmark with public/images/logo.svg when provided */}
 				<WaveLink
 					href="/"
@@ -81,22 +81,24 @@ export function Navbar() {
 					className="font-display text-3xl font-bold uppercase leading-none tracking-tight transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
 				/>
 
-				<div className="hidden items-center gap-8 md:flex">
-					<ul className="flex items-center gap-6">
-						{nav.items.map((item) => (
-							<li key={item.href}>
-								<WaveLink
-									href={item.href}
-									label={item.label[locale]}
-									className="font-display text-base uppercase tracking-[0.15em] text-muted-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
-								/>
-							</li>
-						))}
-					</ul>
-					<LocaleSwitch />
-					<Button asChild className="px-4">
+				{/* Section links — centered in the bar, independent of side widths */}
+				<ul className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 md:flex">
+					{nav.items.map((item) => (
+						<li key={item.href}>
+							<WaveLink
+								href={item.href}
+								label={item.label[locale]}
+								className="font-display text-base uppercase tracking-[0.15em] text-muted-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
+							/>
+						</li>
+					))}
+				</ul>
+
+				<div className="hidden items-center gap-6 md:flex">
+					<Button asChild className="px-4 font-display uppercase">
 						<Link href={nav.cta.href}>{nav.cta.label[locale]}</Link>
 					</Button>
+					<LocaleSwitch />
 				</div>
 
 				<div className="flex items-center gap-2 md:hidden">
