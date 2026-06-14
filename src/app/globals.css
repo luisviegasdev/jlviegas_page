@@ -8,9 +8,12 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-feature);
-  --font-display: var(--font-manuka), var(--font-display-fallback);
+  /* Feature is chained after Manuka to cover the PT diacritics
+     (Ç, Õ, É…) the Manuka subset is missing — keeps the project to
+     the two project fonts only. */
+  --font-display: var(--font-manuka), var(--font-feature);
   --font-body: var(--font-feature);
-  --font-heading: var(--font-manuka), var(--font-display-fallback);
+  --font-heading: var(--font-manuka), var(--font-feature);
   --font-mono: var(--font-feature-mono);
   --color-ring: var(--ring);
   --color-input: var(--input);

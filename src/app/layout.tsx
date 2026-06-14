@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Big_Shoulders } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -22,20 +21,10 @@ const display = localFont({
   ],
   variable: "--font-manuka",
   display: "swap",
-  // Disabled so missing glyphs fall through to Big Shoulders below
-  // instead of the synthetic Arial-metric face.
+  // The Manuka subset lacks latin-ext (Ç, Õ, É… used in PT headings);
+  // disabling the synthetic fallback lets those few glyphs fall through
+  // to Feature (chained in globals.css --font-display) instead of Arial.
   adjustFontFallback: false,
-});
-
-// Glyph-gap fallback only: the provided Manuka subset lacks latin-ext
-// (Ç, Õ, É… needed for PT headings). Big Shoulders fills those in a
-// matching condensed-black voice. TODO: drop when full-coverage
-// Manuka files are provided.
-const displayFallback = Big_Shoulders({
-  subsets: ["latin", "latin-ext"],
-  weight: ["700", "800"],
-  variable: "--font-display-fallback",
-  display: "swap",
 });
 
 const body = localFont({
@@ -84,7 +73,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${displayFallback.variable} ${body.variable} ${mono.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <LocaleProvider>
