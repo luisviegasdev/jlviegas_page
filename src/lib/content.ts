@@ -343,6 +343,16 @@ export const contact = {
 };
 
 export const footer = {
+	reachOut: {
+		overline: { en: "Thanks for visiting", pt: "Obrigado pela visita" },
+		quote: {
+			en: "The most powerful digital constructions exist at the intersection of structural precision and human ambition. I would be honored to help you build yours.",
+			pt: "As construções digitais mais poderosas existem na interseção entre precisão estrutural e ambição humana. Seria uma honra ajudá-lo a construir a sua.",
+		},
+		heading: { en: "Let's build something.", pt: "Vamos construir algo." },
+		// "Reach Out" is used as a brand CTA phrase in both locales intentionally.
+		cta: { en: "Reach Out", pt: "Reach Out" },
+	},
 	tagline: {
 		en: "Structural Web Engineering & Minimalist Design. © 2026. All rights reserved.",
 		pt: "Engenharia Web Estrutural e Design Minimalista. © 2026. Todos os direitos reservados.",

@@ -12,6 +12,7 @@
 
 import { CoreEngineering } from "@/components/sections/CoreEngineering";
 import { Hero } from "@/components/sections/Hero";
+import { ReachOut } from "@/components/sections/ReachOut";
 import { SelectedSystems } from "@/components/sections/SelectedSystems";
 import { TheMechanism } from "@/components/sections/TheMechanism";
 
@@ -22,6 +23,7 @@ export default function Home() {
       <SelectedSystems />
       <CoreEngineering />
       <TheMechanism />
+      <ReachOut />
     </>
   );
 }

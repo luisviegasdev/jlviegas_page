@@ -1,83 +1,68 @@
-"use client";
+'use client';
 
-import { WaveLink } from "@/components/WaveLink";
-import { footer } from "@/lib/content";
-import { useLocale } from "@/lib/locale-context";
+import Link from 'next/link';
 
-const linkClass =
-  "text-sm text-primary-foreground/70 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent";
+import { Reveal } from '@/components/motion';
+import { WaveLink } from '@/components/WaveLink';
+import { footer } from '@/lib/content';
+import { useLocale } from '@/lib/locale-context';
+
+const barLinkClass =
+	'font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-primary-foreground/55 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent';
 
 export function Footer() {
-  const { locale } = useLocale();
+	const { locale } = useLocale();
+	const ro = footer.reachOut;
 
-  return (
-    <footer className="bg-primary text-primary-foreground">
-      <div className="grid gap-12 px-5 py-16 md:grid-cols-12 md:px-10 md:py-20">
-        <div className="md:col-span-6">
-          {/* TODO: replace wordmark with public/images/logo-white.svg when provided */}
-          <p className="font-display text-h1 uppercase leading-none">Lumo</p>
-          <p className="mt-4 max-w-sm text-sm text-primary-foreground/70">
-            {footer.tagline[locale]}
-          </p>
-        </div>
+	return (
+		<footer className="bg-primary text-primary-foreground">
+			{/* — Heading + giant CTA ————————————————————————————— */}
+			<div className="flex flex-col items-center overflow-hidden pt-20 md:pt-28">
+				<Reveal>
+					<p className="font-body text-[clamp(1.375rem,2vw,2rem)] font-bold text-primary-foreground/60">
+						{ro.heading[locale]}
+					</p>
+				</Reveal>
 
-        <nav
-          aria-label={footer.directory.heading[locale]}
-          className="md:col-span-3"
-        >
-          <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-primary-foreground/50">
-            {footer.directory.heading[locale]}
-          </h2>
-          <ul className="mt-5 flex flex-col gap-3">
-            {footer.directory.links.map((link) => (
-              <li key={link.href}>
-                <WaveLink
-                  href={link.href}
-                  label={link.label[locale]}
-                  className={linkClass}
-                />
-              </li>
-            ))}
-          </ul>
-        </nav>
+				{/*
+					"Reach Out" in full-bleed Manuka — same scale-x technique as hero name.
+					scale-x[1.9] widens the ultra-condensed face to span the viewport.
+					The outer overflow-hidden clips the slight overscan into a clean bleed.
+					The whole block is a link to /contact.
+				*/}
+				<Reveal delay={0.08} className="w-full overflow-hidden">
+					<Link href="/contact" aria-label={ro.cta[locale]} className="block">
+						<p className="origin-bottom  select-none whitespace-nowrap text-center font-display text-[15vw] font-bold uppercase leading-[0.78] tracking-[-0.01em] transition-colors hover:text-accent">
+							{ro.cta[locale]}
+						</p>
+					</Link>
+				</Reveal>
+			</div>
 
-        <nav
-          aria-label={footer.protocol.heading[locale]}
-          className="md:col-span-3"
-        >
-          <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-primary-foreground/50">
-            {footer.protocol.heading[locale]}
-          </h2>
-          <ul className="mt-5 flex flex-col gap-3">
-            {footer.protocol.links.map((link) => (
-              <li key={link.label.en}>
-                <WaveLink
-                  href={link.href}
-                  label={link.label[locale]}
-                  className={linkClass}
-                />
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+			{/* — Bottom link bar ———————————————————————————————— */}
+			<div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 border-t border-primary-foreground/10 px-5 py-5 md:px-10">
+				<span className={barLinkClass}>( P )</span>
+				{footer.directory.links.map((link) => (
+					<WaveLink
+						key={link.href}
+						href={link.href}
+						label={link.label[locale]}
+						className={barLinkClass}
+					/>
+				))}
 
-      <div className="flex flex-col gap-3 border-t border-primary-foreground/15 px-5 py-6 md:flex-row md:items-center md:justify-between md:px-10">
-        <p className="text-xs text-primary-foreground/50">
-          {footer.legal[locale]}
-        </p>
-        <ul className="flex items-center gap-6">
-          {footer.legalLinks.map((link) => (
-            <li key={link.label.en}>
-              <WaveLink
-                href={link.href}
-                label={link.label[locale]}
-                className="text-xs text-primary-foreground/50 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </footer>
-  );
+				<span className={`${barLinkClass} select-none px-1`}>|</span>
+
+				<span className={barLinkClass}>( S )</span>
+				{footer.protocol.links.map((link) => (
+					<WaveLink
+						key={link.label.en}
+						href={link.href}
+						label={link.label[locale]}
+						className={barLinkClass}
+					/>
+				))}
+			</div>
+		</footer>
+	);
 }

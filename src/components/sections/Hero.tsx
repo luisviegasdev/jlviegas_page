@@ -33,9 +33,6 @@ export function Hero() {
 						alt={`${hero.name} — portrait`}
 						className="aspect-[16/9] w-full rounded-md border border-border object-cover"
 					/>
-					<figcaption className="mt-4 text-center font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-						{hero.caption[locale]}
-					</figcaption>
 				</figure>
 			</LoadReveal>
 
