@@ -8,7 +8,7 @@ import { footer } from '@/lib/content';
 import { useLocale } from '@/lib/locale-context';
 
 const barLinkClass =
-	'font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-primary-foreground/55 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent';
+	'font-display text-lg uppercase tracking-[0.18em] text-primary-foreground/55 transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent';
 
 export function Footer() {
 	const { locale } = useLocale();

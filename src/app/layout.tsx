@@ -77,9 +77,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <LocaleProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
         </LocaleProvider>
       </body>
     </html>
