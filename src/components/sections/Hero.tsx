@@ -55,8 +55,18 @@ export function Hero() {
 
   // Image transforms — spring-smoothed
   const imageScale = useTransform(smooth, [0.08, 0.85], [1, 8]);
-  const imageBorderRadius = useTransform(smooth, [0.08, 0.5], [8, 0]);
+  const imageBorderRadius = useTransform(smooth, [0.08, 0.5], [8, 2]);
   const overlayOpacity = useTransform(smooth, [0.18, 0.8], [0, 1]);
+
+  // Sticky container — background fades to black (covers the pt-6 gap above the
+  // image that the curtain doesn't reach), border-radius appears at full scale
+  // to create the 2px gap from edges via overflow-hidden clipping.
+  const containerBg = useTransform(
+    smooth,
+    [0.08, 0.55],
+    ['rgba(0,0,0,0)', 'rgba(0,0,0,1)'],
+  );
+  const containerRadius = useTransform(smooth, [0.7, 0.88], [0, 2]);
 
   // Text (caption + headline + CTAs) — raw progress, fades immediately
   const textOpacity = useTransform(scrollYProgress, [0, 0.22], [1, 0]);
@@ -80,8 +90,14 @@ export function Hero() {
 
   return (
     <div ref={wrapperRef} className="relative" style={{ minHeight: '250vh' }}>
-      {/* Sticky hero panel — keeps overflow-hidden for image clipping */}
-      <div className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden flex flex-col">
+      {/* Sticky hero panel — motion.div so background + border-radius can animate */}
+      <motion.div
+        className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden flex flex-col"
+        style={{
+          backgroundColor: reduce ? undefined : containerBg,
+          borderRadius: reduce ? undefined : containerRadius,
+        }}
+      >
 
         {/* TOP — portrait */}
         <div className="flex flex-col items-center px-5 pt-6 md:px-10 md:pt-8">
@@ -90,6 +106,7 @@ export function Hero() {
             style={{
               scale: reduce ? undefined : imageScale,
               borderRadius: reduce ? undefined : imageBorderRadius,
+              transformOrigin: '50% 0%',
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -139,7 +156,7 @@ export function Hero() {
 
         {/* Spacer — holds the layout space the fixed name visually occupies */}
         <div style={{ height: `${nameH}px` }} aria-hidden />
-      </div>
+      </motion.div>
 
       {/* Full-bleed name — position: fixed so it escapes the overflow-hidden container.
           transformOrigin "20px 100%": the text's left edge (pl-5) + viewport bottom
