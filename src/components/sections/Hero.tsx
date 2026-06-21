@@ -56,16 +56,9 @@ export function Hero() {
   // Image transforms — spring-smoothed
   const imageScale = useTransform(smooth, [0.08, 0.85], [1, 8]);
   const imageBorderRadius = useTransform(smooth, [0.08, 0.5], [8, 2]);
-  const overlayOpacity = useTransform(smooth, [0.18, 0.8], [0, 1]);
 
-  // Sticky container — background fades to black (covers the pt-6 gap above the
-  // image that the curtain doesn't reach), border-radius appears at full scale
-  // to create the 2px gap from edges via overflow-hidden clipping.
-  const containerBg = useTransform(
-    smooth,
-    [0.08, 0.55],
-    ['rgba(0,0,0,0)', 'rgba(0,0,0,1)'],
-  );
+  // Container — border-radius only (no bg darkening; image stays as the photo).
+  // The 2px radius at full scale creates a thin gap at the edges via overflow-hidden.
   const containerRadius = useTransform(smooth, [0.7, 0.88], [0, 2]);
 
   // Text (caption + headline + CTAs) — raw progress, fades immediately
@@ -90,11 +83,10 @@ export function Hero() {
 
   return (
     <div ref={wrapperRef} className="relative" style={{ minHeight: '250vh' }}>
-      {/* Sticky hero panel — motion.div so background + border-radius can animate */}
+      {/* Sticky hero panel — motion.div for border-radius at full scale */}
       <motion.div
         className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden flex flex-col"
         style={{
-          backgroundColor: reduce ? undefined : containerBg,
           borderRadius: reduce ? undefined : containerRadius,
         }}
       >
@@ -114,10 +106,6 @@ export function Hero() {
               src="/images/hero-image.png"
               alt={`${hero.name} — portrait`}
               className="aspect-[16/9] w-full object-cover block"
-            />
-            <motion.div
-              className="absolute inset-0 bg-black"
-              style={{ opacity: reduce ? undefined : overlayOpacity }}
             />
           </motion.figure>
 
