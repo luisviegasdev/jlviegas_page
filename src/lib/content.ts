@@ -13,6 +13,16 @@ export type Project = {
 	tags: string;
 };
 
+export type ShowcaseProject = {
+	number: string;
+	title: LocalizedText;
+	category: LocalizedText;
+	stack: string;
+	features: LocalizedText[];
+	blurb: LocalizedText;
+	image: string;
+};
+
 export type TitledBlock = {
 	title: LocalizedText;
 	text: LocalizedText;
@@ -86,6 +96,53 @@ export const works = {
 			tags: "React · Vite · Express · MongoDB",
 		},
 	] satisfies Project[],
+};
+
+/*
+  Projects showcase — drives the cloned <ProjectShowcase /> section.
+  Two stacked parts read from this same array: a textual manifest (number +
+  title + feature list) and an image gallery (wipe-reveal + parallax).
+  TODO: replace `image` placeholders with real screenshots dropped in
+  public/images/projects/ (1.33:1 / 4:3 framing matches the gallery aspect).
+*/
+export const showcase = {
+	projects: [
+		{
+			number: "01",
+			title: { en: "Realio — Real Estate", pt: "Realio — Imobiliário" },
+			category: { en: "Full-Stack", pt: "Full-Stack" },
+			stack: "next.js — typescript — tailwind — node",
+			features: [
+				{ en: "real estate management", pt: "gestão imobiliária" },
+				{ en: "property listings", pt: "listagem de imóveis" },
+				{ en: "client inquiries", pt: "consultas de clientes" },
+				{ en: "market trend prediction", pt: "previsão de tendências" },
+				{ en: "machine learning", pt: "machine learning" },
+			],
+			blurb: {
+				en: "smart, simple and predictive real estate",
+				pt: "imobiliário inteligente, simples e preditivo",
+			},
+			image: "/images/hero-image.png",
+		},
+		{
+			number: "02",
+			title: { en: "Meowseum", pt: "Meowseum" },
+			category: { en: "Full-Stack", pt: "Full-Stack" },
+			stack: "react — vite — node — express",
+			features: [
+				{ en: "online gallery", pt: "galeria online" },
+				{ en: "community engagement", pt: "engajamento da comunidade" },
+				{ en: "image sharing", pt: "compartilhamento de imagens" },
+				{ en: "optimized media serving", pt: "entrega otimizada de mídia" },
+			],
+			blurb: {
+				en: "join the world's biggest cat gallery",
+				pt: "entre na maior galeria de gatos do mundo",
+			},
+			image: "/images/hero-image.png",
+		},
+	] satisfies ShowcaseProject[],
 };
 
 export const services = {

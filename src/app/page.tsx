@@ -10,8 +10,8 @@
   the red accent is reserved exclusively for interaction states.
 */
 
-import { CoreEngineering } from "@/components/sections/CoreEngineering";
 import { Hero } from "@/components/sections/Hero";
+import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
 import { ReachOut } from "@/components/sections/ReachOut";
 import { SelectedSystems } from "@/components/sections/SelectedSystems";
 import { TheMechanism } from "@/components/sections/TheMechanism";
@@ -21,7 +21,7 @@ export default function Home() {
     <>
       <Hero />
       <SelectedSystems />
-      <CoreEngineering />
+      <ProjectShowcase />
       <TheMechanism />
       <ReachOut />
     </>
