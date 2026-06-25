@@ -92,7 +92,7 @@ export function Hero() {
 			{/* Sticky panel — no overflow-hidden so page bg shows around the growing container */}
 			<div className="sticky top-16 h-[calc(100svh-4rem)] relative">
 				{/* Growing media container — centered, expands outward from image natural size */}
-				<div className="absolute inset-0 flex  justify-center">
+				<div className="absolute inset-0 flex justify-center z-10 pointer-events-none">
 					<motion.div
 						className="relative overflow-hidden m-2"
 						style={{
@@ -148,15 +148,21 @@ export function Hero() {
 
 				{/* Hero text — above the container (z-20), fades before the container is large */}
 				<motion.div
-					className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 px-5 text-center pointer-events-none"
+					className="absolute inset-0 z-20 flex flex-col items-center justify-center px-5 text-center pointer-events-none"
+					style={{
+						opacity: reduce ? undefined : textOpacity,
+						y: reduce ? undefined : textY,
+					}}
+				></motion.div>
+
+				{/* h1 + CTAs — behind the image container (z-0) */}
+				<motion.div
+					className="absolute inset-0 z-0 flex flex-col items-center justify-center gap-6 px-5 text-center pointer-events-none"
 					style={{
 						opacity: reduce ? undefined : textOpacity,
 						y: reduce ? undefined : textY,
 					}}
 				>
-					<p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-						{hero.caption[locale]}
-					</p>
 					<h1 className="max-w-[20ch] text-balance font-body text-[clamp(1.75rem,4vw,3.5rem)] leading-[1.08] tracking-[-0.01em]">
 						{hero.headline[locale]}
 					</h1>
