@@ -106,6 +106,7 @@ export const works = {
   public/images/projects/ (1.33:1 / 4:3 framing matches the gallery aspect).
 */
 export const showcase = {
+	heading: { en: "Selected Work", pt: "Trabalhos Selecionados" },
 	projects: [
 		{
 			number: "01",

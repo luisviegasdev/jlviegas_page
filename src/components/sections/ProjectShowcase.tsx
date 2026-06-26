@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
 import {
 	motion,
 	useReducedMotion,
 	useScroll,
 	useTransform,
-} from "framer-motion";
-import { Fragment, useRef } from "react";
+} from 'framer-motion';
+import { Fragment, useRef } from 'react';
 
-import type { ShowcaseProject } from "@/lib/content";
-import { showcase } from "@/lib/content";
-import { useLocale } from "@/lib/locale-context";
-import { cn } from "@/lib/utils";
+import type { ShowcaseProject } from '@/lib/content';
+import { showcase } from '@/lib/content';
+import { useLocale } from '@/lib/locale-context';
+import { cn } from '@/lib/utils';
 
 /*
   Projects section — cloned from elizadoltuofficial.net.
@@ -36,16 +36,16 @@ import { cn } from "@/lib/utils";
 function useWordReveal(reduce: boolean | null) {
 	return function renderWords(text: string, cursor: { i: number }) {
 		if (reduce) return text;
-		const words = text.split(" ");
+		const words = text.split(' ');
 		return words.map((word, idx) => {
 			const order = cursor.i++;
 			return (
 				<Fragment key={`${word}-${order}`}>
 					<motion.span
 						className="inline-block"
-						initial={{ y: "0.5em", opacity: 0 }}
+						initial={{ y: '0.5em', opacity: 0 }}
 						whileInView={{ y: 0, opacity: 1 }}
-						viewport={{ once: true, margin: "-60px" }}
+						viewport={{ once: true, margin: '-60px' }}
 						transition={{
 							duration: 0.5,
 							delay: order * 0.02,
@@ -54,7 +54,7 @@ function useWordReveal(reduce: boolean | null) {
 					>
 						{word}
 					</motion.span>
-					{idx < words.length - 1 ? " " : ""}
+					{idx < words.length - 1 ? ' ' : ''}
 				</Fragment>
 			);
 		});
@@ -72,7 +72,9 @@ function ManifestEntry({ project }: { project: ShowcaseProject }) {
 		<div className="flex flex-1 flex-col flex-wrap text-accent">
 			<p className="leading-none">{project.number}</p>
 			<div className="flex justify-between gap-4">
-				<p className="leading-none">{renderWords(project.title[locale], cursor)}</p>
+				<p className="leading-none">
+					{renderWords(project.title[locale], cursor)}
+				</p>
 				<div className="mt-1 text-right leading-none">
 					{project.features.map((feature) => (
 						<p key={feature.en}>{renderWords(feature[locale], cursor)}</p>
@@ -98,13 +100,13 @@ function GalleryItem({
 	// Image drifts within its overflow-hidden frame across the full scroll pass.
 	const { scrollYProgress } = useScroll({
 		target: frameRef,
-		offset: ["start end", "end start"],
+		offset: ['start end', 'end start'],
 	});
 	// h-[120%] image → translate the 20% overflow so a gap never shows.
-	const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "-16.66%"]);
+	const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '-16.66%']);
 
 	return (
-		<div className={cn("flex flex-col gap-3", full && "md:col-span-2")}>
+		<div className={cn('flex flex-col gap-3', full && 'md:col-span-2')}>
 			<p className="leading-none">{project.number}</p>
 
 			<div
@@ -123,7 +125,7 @@ function GalleryItem({
 						className="absolute inset-0 origin-top bg-black"
 						initial={{ scaleY: 1 }}
 						whileInView={{ scaleY: 0 }}
-						viewport={{ once: true, margin: "-80px" }}
+						viewport={{ once: true, margin: '-80px' }}
 						transition={{ duration: 0.9, ease: [0.7, 0, 0.3, 1] }}
 					/>
 				)}
@@ -141,14 +143,15 @@ function GalleryItem({
 }
 
 export function ProjectShowcase() {
+	const { locale } = useLocale();
 	const reduce = useReducedMotion();
 	const sectionRef = useRef<HTMLDivElement>(null);
 
 	const { scrollYProgress } = useScroll({
 		target: sectionRef,
-		offset: ["start end", "end start"],
+		offset: ['start end', 'end start'],
 	});
-	const contentY = useTransform(scrollYProgress, [0, 1], ["40px", "-40px"]);
+	const contentY = useTransform(scrollYProgress, [0, 1], ['40px', '-40px']);
 
 	const projects = showcase.projects;
 	const odd = projects.length % 2 === 1;
@@ -156,10 +159,15 @@ export function ProjectShowcase() {
 	return (
 		<section
 			ref={sectionRef}
-			id="projects"
-			className="scroll-mt-16 overflow-hidden bg-[#131313] px-5 pb-[30vh] pt-20 font-mono text-xs uppercase tracking-[0.04em] text-[#e2e1df] md:px-10 md:pt-28 md:text-sm"
+			id="works"
+			className="scroll-mt-16 overflow-hidden bg-surface px-5 pb-[30vh] pt-20 font-mono text-xs uppercase tracking-[0.04em] text-[#e2e1df] md:px-10 md:pt-28 md:text-sm"
 		>
 			<motion.div style={{ y: reduce ? undefined : contentY }}>
+				{/* Section title */}
+				<h2 className="mb-12 max-w-[16ch] font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold leading-none tracking-[-0.03em] text-[#e2e1df] md:mb-16">
+					{showcase.heading[locale]}
+				</h2>
+
 				{/* 1 — Manifest */}
 				<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 					{projects.map((project) => (

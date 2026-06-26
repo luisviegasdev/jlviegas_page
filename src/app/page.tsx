@@ -13,14 +13,12 @@
 import { Hero } from "@/components/sections/Hero";
 import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
 import { ReachOut } from "@/components/sections/ReachOut";
-import { SelectedSystems } from "@/components/sections/SelectedSystems";
 import { TheMechanism } from "@/components/sections/TheMechanism";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <SelectedSystems />
       <ProjectShowcase />
       <TheMechanism />
       <ReachOut />
