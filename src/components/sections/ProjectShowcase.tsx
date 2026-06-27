@@ -4,6 +4,7 @@ import {
 	motion,
 	useReducedMotion,
 	useScroll,
+	useSpring,
 	useTransform,
 } from 'framer-motion';
 import { Fragment, useRef } from 'react';
@@ -153,6 +154,23 @@ export function ProjectShowcase() {
 	});
 	const contentY = useTransform(scrollYProgress, [0, 1], ['40px', '-40px']);
 
+	// Title gently fades + sinks downward once it reaches the middle of the viewport,
+	// receding behind the projects below. Spring-smoothed so it eases, never snaps.
+	// The ref lives on a static wrapper (not the transformed h2) so the measurement
+	// can't feed back on itself.
+	const titleRef = useRef<HTMLDivElement>(null);
+	const { scrollYProgress: titleScroll } = useScroll({
+		target: titleRef,
+		offset: ['start 50%', 'end start'],
+	});
+	const smoothTitle = useSpring(titleScroll, {
+		stiffness: 60,
+		damping: 20,
+		mass: 0.4,
+	});
+	const titleOpacity = useTransform(smoothTitle, [0, 0.55], [1, 0]);
+	const titleY = useTransform(smoothTitle, [0, 0.55], [0, 60]);
+
 	const projects = showcase.projects;
 	const odd = projects.length % 2 === 1;
 
@@ -163,10 +181,18 @@ export function ProjectShowcase() {
 			className="scroll-mt-16 overflow-hidden bg-surface px-5 pb-[30vh] pt-20 font-mono text-xs uppercase tracking-[0.04em] text-[#e2e1df] md:px-10 md:pt-28 md:text-sm"
 		>
 			<motion.div style={{ y: reduce ? undefined : contentY }}>
-				{/* Section title */}
-				<h2 className="mb-12 max-w-[16ch] font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold leading-none tracking-[-0.03em] text-[#e2e1df] md:mb-16">
-					{showcase.heading[locale]}
-				</h2>
+				{/* Section title — fades + sinks downward, receding behind the projects */}
+				<div ref={titleRef} className="mb-12 md:mb-16">
+					<motion.h2
+						className="max-w-[16ch] font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold leading-none tracking-[-0.03em] text-black"
+						style={{
+							opacity: reduce ? undefined : titleOpacity,
+							y: reduce ? undefined : titleY,
+						}}
+					>
+						{showcase.heading[locale]}
+					</motion.h2>
+				</div>
 
 				{/* 1 — Manifest */}
 				<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
