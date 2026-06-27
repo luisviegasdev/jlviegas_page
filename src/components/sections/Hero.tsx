@@ -30,8 +30,10 @@ import { useLocale } from '@/lib/locale-context';
   is literally the padding you see at the edges, matching the joegarner.com technique.
 */
 
-// Vertical slices for the one-time wordmark load reveal (workoholics-style).
+// Vertical slices for the wordmark load reveal (workoholics-style) and for the
+// VIEGAS ⇄ V. transition on the surname.
 const REVEAL_BARS = 56;
+const SURNAME_BARS = 30;
 
 export function Hero() {
 	const { locale } = useLocale();
@@ -91,7 +93,7 @@ export function Hero() {
 	// Docked logo anchors from the LEFT (text-left + 0% origin) so the surname can
 	// abbreviate without re-centering. Hero starts with a small left margin and the
 	// logo settles at 40px ≈ the navbar's md:px-10 padding.
-	const nameXHero = 32;
+	const nameXHero = 40;
 	const nameXTarget = 40;
 	// Lift the hero wordmark a hair off the bottom edge so round caps (G, A, S)
 	// — whose ink overshoots below the baseline — aren't clipped by the viewport.
@@ -100,6 +102,13 @@ export function Hero() {
 	const nameScale = useTransform(smooth, [0, 0.2], [1, nameScaleTarget]);
 	const nameY = useTransform(smooth, [0, 0.2], [nameYHero, nameYTarget]);
 	const nameX = useTransform(smooth, [0, 0.2], [nameXHero, nameXTarget]);
+
+	// Shared vertical offset: headline and image both start at 28% of the panel
+	// height, which puts the content block in the upper-middle area while the
+	// large wordmark anchors the bottom. The image top animates to 8px as it
+	// grows to full-bleed.
+	const heroPaddingTop = Math.round(stickyH * 0.28);
+	const imageTop = useTransform(smooth, [0.05, 0.65], [heroPaddingTop, 8]);
 
 	// "Docked" = the name has finished settling into the navbar. The docking
 	// motion completes at smooth 0.2, so we flag a touch past that. The spring
@@ -116,48 +125,50 @@ export function Hero() {
 	});
 
 	// The surname abbreviates ONLY once docked — never during the transition.
-	// Docking plays a one-shot cascade: the whole surname fades out letter by
-	// letter, the trailing letters collapse their width, then "V." resolves.
-	// Un-docking (scrolling back to the top) plays the SAME cascade in reverse:
-	// the dot drops and "VIEGAS" fades back in letter by letter to the full name.
+	// The VIEGAS ⇄ V. change uses the same vertical-slice effect as the load
+	// reveal: slices sweep down to COVER the surname, the layout swaps underneath
+	// (letters collapse / the dot toggles), then slices retract to REVEAL the new
+	// state. Docking does VIEGAS → V.; returning to the start does the inverse.
 	const [first, ...rest] = hero.name.split(' ');
 	const surname = rest.join(' ');
 	const surnameTrail = surname.slice(1).split('');
+	const didMountRef = useRef(false);
 	useEffect(() => {
 		if (reduce || !scope.current) return;
-		const v = '[data-abbrev="v"]';
+		// Skip the first run: the DOM already renders the full surname, and the
+		// load reveal handles the initial appearance.
+		if (!didMountRef.current) {
+			didMountRef.current = true;
+			return;
+		}
 		const trail = '[data-abbrev="trail"]';
 		const dot = '[data-abbrev="dot"]';
+		const slice = '[data-slice]';
 		let cancelled = false;
 
-		// VIEGAS → V.
-		const dock = async () => {
-			await animate(
-				`${v}, ${trail}`,
-				{ opacity: 0 },
-				{ duration: 0.22, delay: stagger(0.07) },
+		const cover = () =>
+			animate(
+				slice,
+				{ scaleY: 1 },
+				{ duration: 0.22, delay: stagger(0.01), ease: [0.65, 0, 0.35, 1] },
 			);
+		const reveal = () =>
+			animate(
+				slice,
+				{ scaleY: 0 },
+				{ duration: 0.38, delay: stagger(0.013), ease: [0.22, 1, 0.36, 1] },
+			);
+
+		const run = async (toAbbrev: boolean) => {
+			await cover();
 			if (cancelled) return;
-			animate(trail, { maxWidth: 0 }, { duration: 0 });
-			await animate(v, { opacity: 1 }, { duration: 0.28 });
-			if (cancelled) return;
-			await animate(dot, { opacity: 1, maxWidth: '0.5em' }, { duration: 0.28 });
+			// Swap the layout under the cover — instant, hidden behind the slices.
+			animate(trail, { maxWidth: toAbbrev ? 0 : '0.85em' }, { duration: 0 });
+			animate(dot, { maxWidth: toAbbrev ? '0.5em' : 0 }, { duration: 0 });
+			await reveal();
 		};
 
-		// V. → VIEGAS (reverse cascade)
-		const undock = async () => {
-			animate(dot, { opacity: 0, maxWidth: 0 }, { duration: 0 });
-			// Re-open the collapsed letter slots (still invisible) so they fade
-			// back in place rather than slide.
-			animate(trail, { maxWidth: '0.85em' }, { duration: 0 });
-			await animate(
-				`${v}, ${trail}`,
-				{ opacity: 1 },
-				{ duration: 0.22, delay: stagger(0.07) },
-			);
-		};
-
-		(phase === 'abbrev' ? dock : undock)();
+		run(phase === 'abbrev');
 		return () => {
 			cancelled = true;
 		};
@@ -166,76 +177,67 @@ export function Hero() {
 	return (
 		<div ref={wrapperRef} className="relative" style={{ minHeight: '380vh' }}>
 			{/* Sticky panel — no overflow-hidden so page bg shows around the growing container */}
-			<div className="sticky top-16 h-[calc(100svh-4rem)] relative">
-				{/* Growing media container — centered, expands outward from image natural size */}
-				<div className="absolute inset-0 flex justify-end z-10 pointer-events-none">
+			<div className="sticky top-16  h-[calc(100svh-4rem)] relative">
+				{/* Growing media container — anchored top-right, top aligned with headline */}
+				<motion.div
+					className="absolute right-2 z-10 overflow-hidden pointer-events-none"
+					style={{
+						top: reduce ? heroPaddingTop : imageTop,
+						width: reduce ? imgW : containerW,
+						height: reduce ? imgH : containerH,
+					}}
+				>
+					{/* Layer 1 — black background, always visible behind the image */}
+					<div className="absolute inset-0 bg-black" />
+
+					{/* Layer 2 — image fades out as the container grows */}
 					<motion.div
-						className="relative overflow-hidden m-2"
-						style={{
-							width: reduce ? imgW : containerW,
-							height: reduce ? imgH : containerH,
-						}}
+						className="absolute inset-0"
+						style={{ opacity: reduce ? undefined : imageOpacity }}
 					>
-						{/* Layer 1 — black background, always visible behind the image */}
-						<div className="absolute inset-0 bg-black" />
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							src="/images/hero-image.png"
+							alt={`${hero.name} — portrait`}
+							className="absolute inset-0  w-full h-full object-cover object-top"
+						/>
+					</motion.div>
 
-						{/* Layer 2 — image fades out as the container grows */}
+					{/* About content — fades in over the full-bleed image, same container */}
+					{!reduce && (
 						<motion.div
-							className="absolute inset-0"
-							style={{ opacity: reduce ? undefined : imageOpacity }}
+							className="absolute inset-0 z-10 pointer-events-none"
+							style={{ opacity: aboutOpacity }}
 						>
-							{/* eslint-disable-next-line @next/next/no-img-element */}
-							<img
-								src="/images/hero-image.png"
-								alt={`${hero.name} — portrait`}
-								className="absolute inset-0  w-full h-full object-cover object-top"
-							/>
-						</motion.div>
-
-						{/* About content — fades in over the full-bleed image, same container */}
-						{!reduce && (
-							<motion.div
-								className="absolute inset-0 z-10 pointer-events-none"
-								style={{ opacity: aboutOpacity }}
-							>
-								<div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-								<div className="absolute inset-0 flex items-end px-5 py-20 md:px-10 md:py-28">
-									<div className="relative z-10 w-full ">
-										<h2 className="max-w-[16ch] font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em] text-primary-foreground">
-											{about.philosophy.heading[locale]}
-										</h2>
-										<div className="mt-10 grid gap-8 md:grid-cols-2 md:gap-16">
-											{about.philosophy.paragraphs.map((paragraph) => (
-												<p
-													key={paragraph.en.slice(0, 24)}
-													className="text-body-lg text-primary-foreground/70"
-												>
-													{paragraph[locale]}
-												</p>
-											))}
-										</div>
+							<div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+							<div className="absolute inset-0 flex items-end px-5 py-20 md:px-10 md:py-28">
+								<div className="relative z-10 w-full ">
+									<h2 className="max-w-[16ch] font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em] text-primary-foreground">
+										{about.philosophy.heading[locale]}
+									</h2>
+									<div className="mt-10 grid gap-8 md:grid-cols-2 md:gap-16">
+										{about.philosophy.paragraphs.map((paragraph) => (
+											<p
+												key={paragraph.en.slice(0, 24)}
+												className="text-body-lg text-primary-foreground/70"
+											>
+												{paragraph[locale]}
+											</p>
+										))}
 									</div>
 								</div>
-							</motion.div>
-						)}
-					</motion.div>
-				</div>
+							</div>
+						</motion.div>
+					)}
+				</motion.div>
 
-				{/* Hero text — above the container (z-20), fades before the container is large */}
+				{/* h1 + CTAs — behind the image container (z-0), top aligned with image */}
 				<motion.div
-					className="absolute inset-0 z-20 flex flex-col items-center justify-center px-5 text-center pointer-events-none"
+					className="absolute inset-0 z-0 flex flex-col items-start justify-start gap-6 px-5 md:px-10 pointer-events-none"
 					style={{
 						opacity: reduce ? undefined : textOpacity,
 						y: reduce ? undefined : textY,
-					}}
-				></motion.div>
-
-				{/* h1 + CTAs — behind the image container (z-0) */}
-				<motion.div
-					className="absolute inset-0 z-0 flex flex-col items-start justify-center gap-6 px-5 md:px-10 text-left pointer-events-none"
-					style={{
-						opacity: reduce ? undefined : textOpacity,
-						y: reduce ? undefined : textY,
+						paddingTop: heroPaddingTop,
 					}}
 				>
 					<h1 className="max-w-[30ch] text-balance font-[family-name:var(--font-kenoky)] text-[clamp(1.75rem,4vw,3rem)] leading-[1.08] tracking-[-0.01em]">
@@ -272,7 +274,7 @@ export function Hero() {
 						    carry data-abbrev hooks the dock effect above animates. */}
 						<span aria-hidden className="inline-flex items-end">
 							<span
-								className="font-[family-name:var(--font-kenoky)] tracking-[0.025em] mr-16"
+								className="font-[family-name:var(--font-kenoky)] tracking-[0.02em] mr-30"
 								style={{
 									// Kenoky caps are ~3% shorter than Geist's at the same
 									// size; nudge up so both words match top-to-bottom.
@@ -285,7 +287,7 @@ export function Hero() {
 							</span>
 							<span
 								ref={scope}
-								className="inline-flex items-end tracking-[-0.03em] font-[family-name:var(--font-geist)]"
+								className="relative inline-flex items-end tracking-[-0.02em] font-[family-name:var(--font-geist)]"
 								style={{
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
@@ -305,9 +307,26 @@ export function Hero() {
 								<span
 									data-abbrev="dot"
 									className="inline-block min-w-0 overflow-x-clip overflow-y-visible"
-									style={{ maxWidth: 0, opacity: 0 }}
+									style={{ maxWidth: 0 }}
 								>
 									.
+								</span>
+								{/* VIEGAS ⇄ V. transition — the same vertical-slice effect as the
+								    load reveal, scoped to the surname. Idle (scaleY 0) until a
+								    dock/undock sweeps it. */}
+								<span
+									aria-hidden
+									className="pointer-events-none absolute inset-x-0 -inset-y-[0.08em] flex"
+								>
+									{Array.from({ length: SURNAME_BARS }).map((_, i) => (
+										<motion.span
+											key={i}
+											data-slice="true"
+											className="flex-1 bg-background"
+											style={{ transformOrigin: 'top' }}
+											initial={{ scaleY: 0 }}
+										/>
+									))}
 								</span>
 							</span>
 						</span>
