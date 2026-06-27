@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Geist } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -42,6 +43,19 @@ const mono = localFont({
   display: "swap",
 });
 
+// Hero name test — Geist (Google, self-hosted) + Kenoky (local). See Hero.tsx.
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+  display: "swap",
+});
+
+const kenoky = localFont({
+  src: [{ path: "../../public/fonts/kenoky-light.woff2", weight: "300" }],
+  variable: "--font-kenoky",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://lumosolucoes.com"),
   title: "Lumo | Bespoke Full-Stack Engineering & Minimalist Web Design",
@@ -73,7 +87,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} ${mono.variable} ${geist.variable} ${kenoky.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <LocaleProvider>
