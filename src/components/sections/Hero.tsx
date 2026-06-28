@@ -106,7 +106,7 @@ export function Hero() {
 	// height, which puts the content block in the upper-middle area while the
 	// large wordmark anchors the bottom. The image top animates to 8px as it
 	// grows to full-bleed.
-	const heroPaddingTop = Math.round(stickyH * 0.28);
+	const heroPaddingTop = Math.round(stickyH * 0.18);
 	const imageTop = useTransform(smooth, [0.05, 0.65], [heroPaddingTop, 8]);
 
 	// "Docked" = the name has finished settling into the navbar. The docking
@@ -242,8 +242,8 @@ export function Hero() {
 					<h1 className="max-w-[30ch] text-balance font-[family-name:var(--font-ppneuemontreal)] text-[clamp(1.75rem,4vw,3rem)] leading-[1.08] tracking-[-0.01em]">
 						{hero.headline[locale]}
 					</h1>
-					<div className="flex flex-wrap items-center justify-start gap-6 pointer-events-auto">
-						<Button asChild className="h-12 px-6 text-base">
+					<div className="flex flex-wrap items-center justify-start gap-6 pointer-events-auto ">
+						<Button asChild className="h-12 px-6 text-base bg-accent">
 							<Link href={hero.primaryCta.href}>
 								{hero.primaryCta.label[locale]}
 							</Link>
@@ -266,7 +266,7 @@ export function Hero() {
 				>
 					<h2
 						aria-label={hero.name}
-						className="relative whitespace-nowrap text-left font-display uppercase leading-[0.72] font-normal "
+						className="relative inline-block whitespace-nowrap text-left font-display uppercase leading-[0.72] font-normal"
 						style={{ fontSize: `${nameFontVw}vw` }}
 					>
 						{/* Both wordmark words in Geist. Surname spans carry data-abbrev
@@ -283,7 +283,7 @@ export function Hero() {
 							</span>
 							<span
 								ref={scope}
-								className="relative inline-flex items-end  font-[family-name:var(--font-geist)]"
+								className="relative inline-flex items-end font-[family-name:var(--font-geist)]"
 								style={{
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
@@ -326,6 +326,14 @@ export function Hero() {
 								</span>
 							</span>
 						</span>
+					{/* © sits above the right end of the wordmark, partially outside bounds */}
+					<span
+						aria-hidden
+						className="absolute right-0 font-[family-name:var(--font-geist)]"
+						style={{ fontSize: '0.42em', lineHeight: 1, top: 0, transform: 'translateX(38%)' }}
+					>
+						©
+					</span>
 
 						{/* One-time load reveal — the wordmark builds up in vertical
 						    slices that retract upward (each revealed bottom→top),
