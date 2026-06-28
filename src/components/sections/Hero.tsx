@@ -106,7 +106,7 @@ export function Hero() {
 	// height, which puts the content block in the upper-middle area while the
 	// large wordmark anchors the bottom. The image top animates to 8px as it
 	// grows to full-bleed.
-	const heroPaddingTop = Math.round(stickyH * 0.18);
+	const heroPaddingTop = Math.round(stickyH * 0.14);
 	const imageTop = useTransform(smooth, [0.05, 0.65], [heroPaddingTop, 8]);
 
 	// "Docked" = the name has finished settling into the navbar. The docking
@@ -179,7 +179,7 @@ export function Hero() {
 			<div className="sticky top-16  h-[calc(100svh-4rem)] relative">
 				{/* Growing media container — anchored top-right, top aligned with headline */}
 				<motion.div
-					className="absolute right-2 z-10 overflow-hidden pointer-events-none"
+					className="absolute right-8 z-10 overflow-hidden pointer-events-none"
 					style={{
 						top: reduce ? heroPaddingTop : imageTop,
 						width: reduce ? imgW : containerW,
@@ -232,14 +232,14 @@ export function Hero() {
 
 				{/* h1 + CTAs — behind the image container (z-0), top aligned with image */}
 				<motion.div
-					className="absolute inset-0 z-0 flex flex-col items-start justify-start gap-6 px-5 md:px-10 pointer-events-none"
+					className="absolute inset-0 z-0 flex flex-col items-start justify-start gap-6 px-5 md:px-8 pointer-events-none"
 					style={{
 						opacity: reduce ? undefined : textOpacity,
 						y: reduce ? undefined : textY,
 						paddingTop: heroPaddingTop,
 					}}
 				>
-					<h1 className="max-w-[30ch] text-balance font-[family-name:var(--font-ppneuemontreal)] text-[clamp(1.75rem,4vw,3rem)] leading-[1.08] tracking-[-0.01em]">
+					<h1 className="max-w-[30ch] text-balance font-display text-[clamp(1.75rem,4vw,3rem)] leading-[1.08] tracking-[-0.01em]">
 						{hero.headline[locale]}
 					</h1>
 					<div className="flex flex-wrap items-center justify-start gap-6 pointer-events-auto ">
@@ -266,14 +266,14 @@ export function Hero() {
 				>
 					<h2
 						aria-label={hero.name}
-						className="relative inline-block whitespace-nowrap text-left font-display uppercase leading-[0.72] font-normal"
+						className="relative inline-block whitespace-nowrap text-left font-body uppercase leading-[0.72]"
 						style={{ fontSize: `${nameFontVw}vw` }}
 					>
 						{/* Both wordmark words in Geist. Surname spans carry data-abbrev
 						    hooks the dock effect animates. */}
 						<span aria-hidden className="inline-flex items-end">
 							<span
-								className="font-[family-name:var(--font-geist)] font-medium"
+								className="font-display mr-16"
 								style={{
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
@@ -283,7 +283,7 @@ export function Hero() {
 							</span>
 							<span
 								ref={scope}
-								className="relative inline-flex items-end font-[family-name:var(--font-geist)]"
+								className="relative inline-flex items-end font-display"
 								style={{
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
@@ -326,15 +326,6 @@ export function Hero() {
 								</span>
 							</span>
 						</span>
-					{/* © sits above the right end of the wordmark, partially outside bounds */}
-					<span
-						aria-hidden
-						className="absolute right-0 font-[family-name:var(--font-geist)]"
-						style={{ fontSize: '0.42em', lineHeight: 1, top: 0, transform: 'translateX(38%)' }}
-					>
-						©
-					</span>
-
 						{/* One-time load reveal — the wordmark builds up in vertical
 						    slices that retract upward (each revealed bottom→top),
 						    staggered left→right. Cream bars over the cream canvas,
