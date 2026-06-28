@@ -2,12 +2,12 @@
   Project: Lumo Digital Architecture & Development Hub
   Aesthetic: editorial-minimal — calm and precise
   Tone: professional and warm; quiet confidence, high-end positioning
-  Fonts: Manuka-Condensed-Black (display) + FeatureDisplay (body)
+  Fonts: PP Neue Montreal (body/display) + Geist (hero wordmark surname)
          — self-hosted from public/fonts/ via next/font/local
   Primary: #F0EFEB (canvas/highlight) — Secondary: #000000 — Accent: #E62815
-  Memorable element: oversized Manuka condensed headlines set against
-  bracketed structural metadata on a hairline-ruled editorial grid;
-  the red accent is reserved exclusively for interaction states.
+  Memorable element: oversized PP Neue Montreal headlines set against
+  the Geist-rendered surname wordmark; the red accent is reserved
+  exclusively for interaction states.
 */
 
 import { Hero } from "@/components/sections/Hero";

@@ -14,7 +14,6 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { WaveLink } from '@/components/WaveLink';
 import { about, hero } from '@/lib/content';
 import { useLocale } from '@/lib/locale-context';
 
@@ -240,7 +239,7 @@ export function Hero() {
 						paddingTop: heroPaddingTop,
 					}}
 				>
-					<h1 className="max-w-[30ch] text-balance font-[family-name:var(--font-kenoky)] text-[clamp(1.75rem,4vw,3rem)] leading-[1.08] tracking-[-0.01em]">
+					<h1 className="max-w-[30ch] text-balance font-[family-name:var(--font-ppneuemontreal)] text-[clamp(1.75rem,4vw,3rem)] leading-[1.08] tracking-[-0.01em]">
 						{hero.headline[locale]}
 					</h1>
 					<div className="flex flex-wrap items-center justify-start gap-6 pointer-events-auto">
@@ -267,18 +266,15 @@ export function Hero() {
 				>
 					<h2
 						aria-label={hero.name}
-						className="relative whitespace-nowrap text-left font-display uppercase leading-[0.72] font-medium "
+						className="relative whitespace-nowrap text-left font-display uppercase leading-[0.72] font-normal "
 						style={{ fontSize: `${nameFontVw}vw` }}
 					>
-						{/* First name in Kenoky, surname in Geist. The surname spans
-						    carry data-abbrev hooks the dock effect above animates. */}
+						{/* Both wordmark words in Geist. Surname spans carry data-abbrev
+						    hooks the dock effect animates. */}
 						<span aria-hidden className="inline-flex items-end">
 							<span
-								className="font-[family-name:var(--font-kenoky)] tracking-[0.02em] mr-30"
+								className="font-[family-name:var(--font-geist)] font-medium"
 								style={{
-									// Kenoky caps are ~3% shorter than Geist's at the same
-									// size; nudge up so both words match top-to-bottom.
-									fontSize: '1.034em',
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
 								}}
@@ -287,7 +283,7 @@ export function Hero() {
 							</span>
 							<span
 								ref={scope}
-								className="relative inline-flex items-end tracking-[-0.02em] font-[family-name:var(--font-geist)]"
+								className="relative inline-flex items-end  font-[family-name:var(--font-geist)]"
 								style={{
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
