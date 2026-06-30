@@ -10,6 +10,7 @@
   exclusively for interaction states.
 */
 
+import { AboutSection } from "@/components/sections/AboutSection";
 import { Hero } from "@/components/sections/Hero";
 import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
 import { ReachOut } from "@/components/sections/ReachOut";
@@ -19,6 +20,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <AboutSection />
       <ProjectShowcase />
       <TheMechanism />
       <ReachOut />

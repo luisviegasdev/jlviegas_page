@@ -5,6 +5,7 @@ import "./globals.css";
 
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import { LocaleProvider } from "@/lib/locale-context";
 
 const ppneue = localFont({
@@ -58,9 +59,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <LocaleProvider>
+          <SmoothScroll>
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />
+          </SmoothScroll>
         </LocaleProvider>
       </body>
     </html>

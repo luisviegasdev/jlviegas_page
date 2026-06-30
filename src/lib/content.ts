@@ -216,6 +216,18 @@ export const mechanism = {
 };
 
 export const about = {
+	intro: {
+		eyebrow: { en: "About Me", pt: "Sobre Mim" },
+		headline: {
+			en: "Full-stack architect specializing in bespoke digital experiences for ambitious brands.",
+			pt: "Arquiteto full-stack especializado em experiências digitais sob medida para marcas ambiciosas.",
+		},
+		body: {
+			en: "I believe a brand's digital presence should be a seamless extension of its identity — engineered with structural precision, minimalist restraint, and obsessive attention to every detail.",
+			pt: "Acredito que a presença digital de uma marca deve ser uma extensão perfeita da sua identidade — projetada com precisão estrutural, contenção minimalista e atenção obsessiva a cada detalhe.",
+		},
+		cta: { label: { en: "Learn More →", pt: "Saiba Mais →" }, href: "/about" },
+	},
 	philosophy: {
 		heading: {
 			en: "Structural integrity meets minimalist restraint",

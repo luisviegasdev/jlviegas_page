@@ -54,9 +54,9 @@ export function Hero() {
 	});
 
 	const smooth = useSpring(scrollYProgress, {
-		stiffness: 55,
-		damping: 20,
-		mass: 0.5,
+		stiffness: 160,
+		damping: 24,
+		mass: 0.35,
 	});
 
 	// Image natural dimensions (the starting size of the growing container)
@@ -65,18 +65,18 @@ export function Hero() {
 	const stickyH = dims.h - 64; // 100svh minus navbar
 
 	// Target: full panel minus 8px on every side — page background shows as the gap
-	const targetW = dims.w - 16;
+	const targetW = dims.w - 44;
 	const targetH = stickyH - 16;
 
 	// Container grows via width/height — not CSS scale
-	const containerW = useTransform(smooth, [0.05, 0.65], [imgW, targetW]);
-	const containerH = useTransform(smooth, [0.05, 0.65], [imgH, targetH]);
+	const containerW = useTransform(smooth, [0.04, 0.46], [imgW, targetW]);
+	const containerH = useTransform(smooth, [0.04, 0.46], [imgH, targetH]);
 
 	// Image fades out as the container grows, revealing the black layer beneath
-	const imageOpacity = useTransform(smooth, [0.2, 0.65], [1, 0]);
+	const imageOpacity = useTransform(smooth, [0.08, 0.46], [1, 0]);
 
 	// About content appears once the black layer is fully revealed
-	const aboutOpacity = useTransform(scrollYProgress, [0.68, 0.85], [0, 1]);
+	const aboutOpacity = useTransform(scrollYProgress, [0.43, 0.48], [0, 1]);
 
 	// Hero text fades early so it's gone before the container is large
 	const textOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0]);
@@ -107,7 +107,7 @@ export function Hero() {
 	// large wordmark anchors the bottom. The image top animates to 8px as it
 	// grows to full-bleed.
 	const heroPaddingTop = Math.round(stickyH * 0.14);
-	const imageTop = useTransform(smooth, [0.05, 0.65], [heroPaddingTop, 8]);
+	const imageTop = useTransform(smooth, [0.04, 0.46], [heroPaddingTop, 8]);
 
 	// "Docked" = the name has finished settling into the navbar. The docking
 	// motion completes at smooth 0.2, so we flag a touch past that. The spring
@@ -174,12 +174,12 @@ export function Hero() {
 	}, [phase, reduce, animate, scope]);
 
 	return (
-		<div ref={wrapperRef} className="relative" style={{ minHeight: '380vh' }}>
+		<div ref={wrapperRef} className="relative" style={{ minHeight: '438vh' }}>
 			{/* Sticky panel — no overflow-hidden so page bg shows around the growing container */}
 			<div className="sticky top-16  h-[calc(100svh-4rem)] relative">
 				{/* Growing media container — anchored top-right, top aligned with headline */}
 				<motion.div
-					className="absolute right-8 z-10 overflow-hidden pointer-events-none"
+					className="absolute right-4 z-10 overflow-hidden pointer-events-none"
 					style={{
 						top: reduce ? heroPaddingTop : imageTop,
 						width: reduce ? imgW : containerW,
@@ -205,26 +205,22 @@ export function Hero() {
 					{/* About content — fades in over the full-bleed image, same container */}
 					{!reduce && (
 						<motion.div
-							className="absolute inset-0 z-10 pointer-events-none"
+							className="absolute inset-0 z-10 pointer-events-none "
 							style={{ opacity: aboutOpacity }}
 						>
 							<div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-							<div className="absolute inset-0 flex items-end px-5 py-20 md:px-10 md:py-28">
-								<div className="relative z-10 w-full ">
-									<h2 className="max-w-[16ch] font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em] text-primary-foreground">
-										{about.philosophy.heading[locale]}
-									</h2>
-									<div className="mt-10 grid gap-8 md:grid-cols-2 md:gap-16">
-										{about.philosophy.paragraphs.map((paragraph) => (
-											<p
-												key={paragraph.en.slice(0, 24)}
-												className="text-body-lg text-primary-foreground/70"
-											>
-												{paragraph[locale]}
-											</p>
-										))}
-									</div>
-								</div>
+							<div className="absolute inset-0 flex flex-col items-center justify-center gap-8 px-5 text-center ">
+								<h2 className="max-w-[20ch] font-display text-[clamp(2.4rem,6vw,5.5rem)] font-bold leading-[0.95] tracking-[-0.03em] text-primary-foreground">
+									{about.philosophy.heading[locale]}
+								</h2>
+								<Button
+									asChild
+									className="pointer-events-auto h-12 px-6 text-base"
+								>
+									<Link href={hero.primaryCta.href}>
+										{hero.primaryCta.label[locale]}
+									</Link>
+								</Button>
 							</div>
 						</motion.div>
 					)}
@@ -232,7 +228,7 @@ export function Hero() {
 
 				{/* h1 + CTAs — behind the image container (z-0), top aligned with image */}
 				<motion.div
-					className="absolute inset-0 z-0 flex flex-col items-start justify-start gap-6 px-5 md:px-8 pointer-events-none"
+					className="absolute inset-0 z-0 flex flex-col items-start justify-start gap-6 px-5 md:px-4 pointer-events-none"
 					style={{
 						opacity: reduce ? undefined : textOpacity,
 						y: reduce ? undefined : textY,
