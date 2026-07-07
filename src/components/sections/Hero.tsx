@@ -84,7 +84,7 @@ export function Hero() {
 
 	// Hero wordmark — one font constant keeps the docking math in sync. Sized so
 	// "LUIS VIEGAS" fits on one line within the viewport (no overflow).
-	const nameFontVw = 16.5;
+	const nameFontVw = 13;
 	const nameFontPx = (nameFontVw / 100) * dims.w;
 	const nameH = nameFontPx * 0.72; // matches leading-[0.72]
 	const nameScaleTarget = 18 / nameFontPx; // ~18px logo when docked
@@ -246,6 +246,39 @@ export function Hero() {
 						</Button>
 					</div>
 				</motion.div>
+
+				{/* Scroll indicator — sits just above the wordmark, fades with hero text */}
+				{!reduce && (
+					<motion.div
+						className="absolute right-5 md:right-10 z-[52] flex items-center gap-2 pointer-events-none"
+						style={{ opacity: textOpacity, bottom: 'calc(14vw * 0.72 + 2rem)' }}
+					>
+						<span className="font-display text-[10px] uppercase tracking-[0.18em] text-foreground/40">
+							scroll
+						</span>
+						<motion.svg
+							width="14"
+							height="14"
+							viewBox="0 0 16 16"
+							fill="none"
+							className="text-foreground/40"
+							animate={{ y: [0, 4, 0] }}
+							transition={{
+								duration: 1.6,
+								repeat: Infinity,
+								ease: 'easeInOut',
+							}}
+						>
+							<path
+								d="M8 3v10M4 9l4 4 4-4"
+								stroke="currentColor"
+								strokeWidth="1.25"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							/>
+						</motion.svg>
+					</motion.div>
+				)}
 			</div>
 
 			{/* Fixed name — position: fixed, transitions from hero bottom to navbar logo */}
@@ -269,7 +302,7 @@ export function Hero() {
 						    hooks the dock effect animates. */}
 						<span aria-hidden className="inline-flex items-end">
 							<span
-								className="font-display mr-16"
+								className="font-display mr-20"
 								style={{
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
