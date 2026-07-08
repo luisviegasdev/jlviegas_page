@@ -9,6 +9,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 			lerp: 0.075,          // float momentum — lower = more inertia
 			wheelMultiplier: 1.4, // more travel per scroll tick
 			touchMultiplier: 1.6,
+			anchors: true,        // smooth #hash scrolls (CSS smooth-behavior is off)
 		});
 
 		let rafId: number;

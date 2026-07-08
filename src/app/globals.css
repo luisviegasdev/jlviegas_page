@@ -103,10 +103,13 @@
   html {
     @apply font-body;
   }
-  @media (prefers-reduced-motion: no-preference) {
-    html {
-      scroll-behavior: smooth;
-    }
+  /* Lenis owns scrolling. CSS smooth-behavior would browser-animate every
+     per-frame scrollTop write Lenis makes (the two systems fight and the
+     scroll jams), and scroll-anchoring corrections after hover-driven layout
+     shifts read to Lenis as external scrolls that kill its momentum. */
+  html {
+    scroll-behavior: auto;
+    overflow-anchor: none;
   }
   ::selection {
     background-color: var(--accent);

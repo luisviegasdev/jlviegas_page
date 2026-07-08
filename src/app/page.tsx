@@ -10,20 +10,22 @@
   exclusively for interaction states.
 */
 
-import { AboutSection } from "@/components/sections/AboutSection";
-import { Hero } from "@/components/sections/Hero";
-import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
-import { ReachOut } from "@/components/sections/ReachOut";
-import { TheMechanism } from "@/components/sections/TheMechanism";
+import { AboutSection } from '@/components/sections/AboutSection';
+import { Hero } from '@/components/sections/Hero';
+import { ProjectShowcase } from '@/components/sections/ProjectShowcase';
+import { ReachOut } from '@/components/sections/ReachOut';
+import { ServicesSection } from '@/components/sections/ServicesSection';
+import { TheMechanism } from '@/components/sections/TheMechanism';
 
 export default function Home() {
-  return (
-    <>
-      <Hero />
-      <AboutSection />
-      <ProjectShowcase />
-      <TheMechanism />
-      <ReachOut />
-    </>
-  );
+	return (
+		<>
+			<Hero />
+			<AboutSection />
+			<TheMechanism />
+			<ProjectShowcase />
+			<ServicesSection />
+			<ReachOut />
+		</>
+	);
 }
