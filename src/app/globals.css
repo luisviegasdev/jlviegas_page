@@ -12,6 +12,7 @@
   --font-body: var(--font-ppneuemontreal);
   --font-heading: var(--font-ppneuemontreal);
   --font-mono: var(--font-ppneuemontreal);
+  --font-wordmark: var(--font-unica);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);

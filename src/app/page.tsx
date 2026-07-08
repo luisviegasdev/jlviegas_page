@@ -15,16 +15,14 @@ import { Hero } from '@/components/sections/Hero';
 import { ProjectShowcase } from '@/components/sections/ProjectShowcase';
 import { ReachOut } from '@/components/sections/ReachOut';
 import { ServicesSection } from '@/components/sections/ServicesSection';
-import { TheMechanism } from '@/components/sections/TheMechanism';
 
 export default function Home() {
 	return (
 		<>
 			<Hero />
 			<AboutSection />
-			<TheMechanism />
-			<ProjectShowcase />
 			<ServicesSection />
+			<ProjectShowcase />
 			<ReachOut />
 		</>
 	);

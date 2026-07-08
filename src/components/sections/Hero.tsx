@@ -4,6 +4,7 @@ import {
 	motion,
 	stagger,
 	useAnimate,
+	useMotionValue,
 	useMotionValueEvent,
 	useReducedMotion,
 	useScroll,
@@ -64,8 +65,9 @@ export function Hero() {
 	const imgH = imgW * (9 / 16);
 	const stickyH = dims.h - 64; // 100svh minus navbar
 
-	// Target: full panel minus 8px on every side — page background shows as the gap
-	const targetW = dims.w - 44;
+	// Target: full panel minus 16px horizontal / 8px vertical gaps — page
+	// background shows as the gap (growth is symmetric around the center)
+	const targetW = dims.w - 32;
 	const targetH = stickyH - 16;
 
 	// Container grows via width/height — not CSS scale
@@ -90,9 +92,27 @@ export function Hero() {
 	const nameScaleTarget = 18 / nameFontPx; // ~18px logo when docked
 	const nameYTarget = 32 - dims.h + (nameH * nameScaleTarget) / 2;
 	// Docked logo anchors from the LEFT (text-left + 0% origin) so the surname can
-	// abbreviate without re-centering. Hero starts with a small left margin and the
-	// logo settles at 40px ≈ the navbar's md:px-10 padding.
-	const nameXHero = 40;
+	// abbreviate without re-centering. The hero wordmark starts horizontally
+	// CENTERED (measured width → centered offset) and docks at 40px ≈ the
+	// navbar's md:px-10 padding.
+	const nameWrapRef = useRef<HTMLHeadingElement>(null);
+	// Centered offset = (content width − wordmark width) / 2, measured from the
+	// DOM (clientWidth excludes the scrollbar; innerWidth would skew center).
+	// Kept in a MotionValue so the wordmark recenters the moment the
+	// measurement lands — a plain useTransform range only re-evaluates on the
+	// next scroll tick.
+	const nameXHeroMv = useMotionValue(40);
+	useEffect(() => {
+		const el = nameWrapRef.current;
+		if (!el) return;
+		const measure = () =>
+			nameXHeroMv.set(
+				(document.documentElement.clientWidth - el.offsetWidth) / 2,
+			);
+		measure();
+		// Re-measure once webfonts land — Geist swap changes the width.
+		document.fonts?.ready.then(measure);
+	}, [dims.w, nameXHeroMv]);
 	const nameXTarget = 40;
 	// Lift the hero wordmark a hair off the bottom edge so round caps (G, A, S)
 	// — whose ink overshoots below the baseline — aren't clipped by the viewport.
@@ -100,12 +120,17 @@ export function Hero() {
 
 	const nameScale = useTransform(smooth, [0, 0.2], [1, nameScaleTarget]);
 	const nameY = useTransform(smooth, [0, 0.2], [nameYHero, nameYTarget]);
-	const nameX = useTransform(smooth, [0, 0.2], [nameXHero, nameXTarget]);
+	// Multi-input so the wordmark recenters immediately when the measured
+	// hero offset lands, not just on the next scroll movement.
+	const nameX = useTransform(() => {
+		const t = Math.min(Math.max(smooth.get() / 0.2, 0), 1);
+		const xHero = nameXHeroMv.get();
+		return xHero + (nameXTarget - xHero) * t;
+	});
 
-	// Shared vertical offset: headline and image both start at 28% of the panel
-	// height, which puts the content block in the upper-middle area while the
-	// large wordmark anchors the bottom. The image top animates to 8px as it
-	// grows to full-bleed.
+	// Vertical rhythm: image starts at 14% of the panel height, the headline +
+	// CTA sit centered right below it, and the large wordmark anchors the
+	// bottom. The image top animates to 8px as it grows to full-bleed.
 	const heroPaddingTop = Math.round(stickyH * 0.14);
 	const imageTop = useTransform(smooth, [0.04, 0.46], [heroPaddingTop, 8]);
 
@@ -177,10 +202,11 @@ export function Hero() {
 		<div ref={wrapperRef} className="relative" style={{ minHeight: '438vh' }}>
 			{/* Sticky panel — no overflow-hidden so page bg shows around the growing container */}
 			<div className="sticky top-16  h-[calc(100svh-4rem)] relative">
-				{/* Growing media container — anchored top-right, top aligned with headline */}
+				{/* Growing media container — horizontally centered, grows symmetrically */}
 				<motion.div
-					className="absolute right-4 z-10 overflow-hidden pointer-events-none"
+					className="absolute left-1/2 z-10 overflow-hidden pointer-events-none"
 					style={{
+						x: '-50%',
 						top: reduce ? heroPaddingTop : imageTop,
 						width: reduce ? imgW : containerW,
 						height: reduce ? imgH : containerH,
@@ -226,19 +252,19 @@ export function Hero() {
 					)}
 				</motion.div>
 
-				{/* h1 + CTAs — behind the image container (z-0), top aligned with image */}
+				{/* h1 + CTA — centered below the image (z-0, the growing image covers it) */}
 				<motion.div
-					className="absolute inset-0 z-0 flex flex-col items-start justify-start gap-6 px-5 md:px-4 pointer-events-none"
+					className="absolute inset-x-0 z-0 flex flex-col items-center gap-6 px-5 text-center pointer-events-none"
 					style={{
 						opacity: reduce ? undefined : textOpacity,
 						y: reduce ? undefined : textY,
-						paddingTop: heroPaddingTop,
+						top: heroPaddingTop + imgH + 40,
 					}}
 				>
 					<h1 className="max-w-[30ch] text-balance font-display text-[clamp(1.75rem,4vw,3rem)] leading-[1.08] tracking-[-0.01em]">
 						{hero.headline[locale]}
 					</h1>
-					<div className="flex flex-wrap items-center justify-start gap-6 pointer-events-auto ">
+					<div className="flex flex-wrap items-center justify-center gap-6 pointer-events-auto ">
 						<Button asChild className="h-12 px-6 text-base bg-accent">
 							<Link href={hero.primaryCta.href}>
 								{hero.primaryCta.label[locale]}
@@ -247,38 +273,6 @@ export function Hero() {
 					</div>
 				</motion.div>
 
-				{/* Scroll indicator — sits just above the wordmark, fades with hero text */}
-				{!reduce && (
-					<motion.div
-						className="absolute right-5 md:right-10 z-[52] flex items-center gap-2 pointer-events-none"
-						style={{ opacity: textOpacity, bottom: 'calc(14vw * 0.72 + 2rem)' }}
-					>
-						<span className="font-display text-[10px] uppercase tracking-[0.18em] text-foreground/40">
-							scroll
-						</span>
-						<motion.svg
-							width="14"
-							height="14"
-							viewBox="0 0 16 16"
-							fill="none"
-							className="text-foreground/40"
-							animate={{ y: [0, 4, 0] }}
-							transition={{
-								duration: 1.6,
-								repeat: Infinity,
-								ease: 'easeInOut',
-							}}
-						>
-							<path
-								d="M8 3v10M4 9l4 4 4-4"
-								stroke="currentColor"
-								strokeWidth="1.25"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-						</motion.svg>
-					</motion.div>
-				)}
 			</div>
 
 			{/* Fixed name — position: fixed, transitions from hero bottom to navbar logo */}
@@ -294,15 +288,16 @@ export function Hero() {
 					}}
 				>
 					<h2
+						ref={nameWrapRef}
 						aria-label={hero.name}
-						className="relative inline-block whitespace-nowrap text-left font-body uppercase leading-[0.72]"
+						className="relative inline-block whitespace-nowrap text-left font-wordmark uppercase leading-[0.72]"
 						style={{ fontSize: `${nameFontVw}vw` }}
 					>
-						{/* Both wordmark words in Geist. Surname spans carry data-abbrev
-						    hooks the dock effect animates. */}
+						{/* Both wordmark words in Neue Haas Unica. Surname spans carry
+						    data-abbrev hooks the dock effect animates. */}
 						<span aria-hidden className="inline-flex items-end">
 							<span
-								className="font-display mr-20"
+								className="font-wordmark mr-16"
 								style={{
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
@@ -312,7 +307,7 @@ export function Hero() {
 							</span>
 							<span
 								ref={scope}
-								className="relative inline-flex items-end font-display"
+								className="relative inline-flex items-end font-wordmark"
 								style={{
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',

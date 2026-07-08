@@ -24,6 +24,13 @@ const geist = Geist({
 	display: 'swap',
 });
 
+// Hero wordmark only — see --font-wordmark in globals.css
+const unica = localFont({
+	src: '../../public/fonts/Neue Haas Unica Pro.woff2',
+	variable: '--font-unica',
+	display: 'swap',
+});
+
 export const metadata: Metadata = {
 	metadataBase: new URL('https://lumosolucoes.com'),
 	title: 'Luis Viegas',
@@ -55,7 +62,7 @@ export default function RootLayout({
 	return (
 		<html
 			lang="en"
-			className={`${ppneue.variable} ${geist.variable} h-full antialiased`}
+			className={`${ppneue.variable} ${geist.variable} ${unica.variable} h-full antialiased`}
 		>
 			<body className="min-h-full flex flex-col">
 				<LocaleProvider>
