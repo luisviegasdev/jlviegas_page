@@ -15,16 +15,19 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { about, hero } from '@/lib/content';
+import { WaveLink } from '@/components/WaveLink';
+import { about, hero, nav } from '@/lib/content';
 import { useLocale } from '@/lib/locale-context';
 
 /*
-  Hero scroll sequence — three phases over 380vh:
+  Hero scroll sequence (hildenkaira.fi-style header):
 
-  1. [0–18%]   Hero text + name fade / transition to navbar
-  2. [5–65%]   Media container grows from natural image size to (viewport − 16px),
-               with 10px border-radius retained at max — page background shows as gap
-  3. [68–85%]  About content fades in over the full-bleed image
+  At rest the giant wordmark spans the FULL page width at the very top, with
+  the nav links in a centered row right below it. On scroll the wordmark
+  shrinks/docks into the navbar's left logo slot (VIEGAS → V.) while the
+  links row slides up into the navbar's center — both driven by the same
+  spring so they land together. Below them, the media container grows from
+  its natural size to full-bleed and the About content fades in over it.
 
   The container grows via width/height (not transform: scale) so the page background
   is literally the padding you see at the edges, matching the joegarner.com technique.
@@ -84,39 +87,46 @@ export function Hero() {
 	const textOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0]);
 	const textY = useTransform(scrollYProgress, [0, 0.18], [0, -18]);
 
-	// Hero wordmark — one font constant keeps the docking math in sync. Sized so
-	// "LUIS VIEGAS" fits on one line within the viewport (no overflow).
-	const nameFontVw = 13;
+	// Hero wordmark — the font size is FITTED so "LUIS VIEGAS" spans the full
+	// page width (small side gaps). Width scales linearly with font size (the
+	// inter-word gap is em-based), so one measured correction converges.
+	const [nameFontVw, setNameFontVw] = useState(13);
 	const nameFontPx = (nameFontVw / 100) * dims.w;
 	const nameH = nameFontPx * 0.72; // matches leading-[0.72]
 	const nameScaleTarget = 18 / nameFontPx; // ~18px logo when docked
-	const nameYTarget = 32 - dims.h + (nameH * nameScaleTarget) / 2;
-	// Docked logo anchors from the LEFT (text-left + 0% origin) so the surname can
-	// abbreviate without re-centering. The hero wordmark starts horizontally
-	// CENTERED (measured width → centered offset) and docks at 40px ≈ the
-	// navbar's md:px-10 padding.
+	// Docked logo anchors from the LEFT (text-left + 0% origin) so the surname
+	// can abbreviate without re-centering. The hero wordmark starts centered
+	// (full width → ~16px gaps) and docks at 40px ≈ the navbar's md:px-10.
 	const nameWrapRef = useRef<HTMLHeadingElement>(null);
-	// Centered offset = (content width − wordmark width) / 2, measured from the
-	// DOM (clientWidth excludes the scrollbar; innerWidth would skew center).
-	// Kept in a MotionValue so the wordmark recenters the moment the
-	// measurement lands — a plain useTransform range only re-evaluates on the
-	// next scroll tick.
+	// Measured offsets live in MotionValues so the wordmark re-fits the moment
+	// a measurement lands — a plain useTransform range only re-evaluates on
+	// the next scroll tick.
 	const nameXHeroMv = useMotionValue(40);
 	useEffect(() => {
 		const el = nameWrapRef.current;
 		if (!el) return;
-		const measure = () =>
-			nameXHeroMv.set(
-				(document.documentElement.clientWidth - el.offsetWidth) / 2,
-			);
+		const measure = () => {
+			const w = el.offsetWidth;
+			if (!w) return;
+			// Leave room for the mobile menu button; desktop goes edge-to-edge.
+			const pad = document.documentElement.clientWidth >= 768 ? 32 : 96;
+			const target = document.documentElement.clientWidth - pad;
+			setNameFontVw((vw) => {
+				const next = vw * (target / w);
+				return Math.abs(next - vw) > 0.05 ? next : vw;
+			});
+			nameXHeroMv.set((document.documentElement.clientWidth - w) / 2);
+		};
 		measure();
-		// Re-measure once webfonts land — Geist swap changes the width.
+		// Re-measure once webfonts land — the swap changes the width.
 		document.fonts?.ready.then(measure);
-	}, [dims.w, nameXHeroMv]);
+	}, [dims.w, nameFontVw, nameXHeroMv]);
 	const nameXTarget = 40;
-	// Lift the hero wordmark a hair off the bottom edge so round caps (G, A, S)
-	// — whose ink overshoots below the baseline — aren't clipped by the viewport.
-	const nameYHero = -18;
+	// Wordmark rest position: pinned to the very top of the page.
+	const nameYHero = 12;
+	// Docked: visual center lands mid-navbar (h-16 → 32px). Scale pivots on
+	// the h2's top-left, so the scaled height is what offsets the center.
+	const nameYTarget = 32 - (nameH * nameScaleTarget) / 2;
 
 	const nameScale = useTransform(smooth, [0, 0.2], [1, nameScaleTarget]);
 	const nameY = useTransform(smooth, [0, 0.2], [nameYHero, nameYTarget]);
@@ -128,11 +138,37 @@ export function Hero() {
 		return xHero + (nameXTarget - xHero) * t;
 	});
 
-	// Vertical rhythm: image starts at 14% of the panel height, the headline +
-	// CTA sit centered right below it, and the large wordmark anchors the
-	// bottom. The image top animates to 8px as it grows to full-bleed.
-	const heroPaddingTop = Math.round(stickyH * 0.14);
-	const imageTop = useTransform(smooth, [0.04, 0.46], [heroPaddingTop, 8]);
+	// Nav links row — rests right below the wordmark, docks into the navbar
+	// center (hildenkaira.fi behavior). Same spring window as the wordmark so
+	// both land together. The rest offset depends on the fitted wordmark
+	// height, so it lives in a MotionValue (same staleness rule as nameXHeroMv).
+	const linksRestY = nameYHero + nameH + 24;
+	const linksYTarget = 22; // ~centers the row in the 64px navbar
+	const linksRestMv = useMotionValue(linksRestY);
+	useEffect(() => {
+		linksRestMv.set(linksRestY);
+	}, [linksRestY, linksRestMv]);
+	const linksY = useTransform(() => {
+		const t = Math.min(Math.max(smooth.get() / 0.2, 0), 1);
+		const rest = linksRestMv.get();
+		return rest + (linksYTarget - rest) * t;
+	});
+
+	// Vertical rhythm: the media container starts below the wordmark + links
+	// stack; the headline + CTA sit centered right below it. The image top
+	// animates to 8px as it grows to full-bleed. Panel coords = viewport − 64
+	// (navbar). Kept in a MotionValue so the image drops into place as soon
+	// as the fitted wordmark height lands.
+	const heroPaddingTop = Math.round(linksRestY + 56 - 64);
+	const heroPadMv = useMotionValue(heroPaddingTop);
+	useEffect(() => {
+		heroPadMv.set(heroPaddingTop);
+	}, [heroPaddingTop, heroPadMv]);
+	const imageTop = useTransform(() => {
+		const t = Math.min(Math.max((smooth.get() - 0.04) / 0.42, 0), 1);
+		const rest = heroPadMv.get();
+		return rest + (8 - rest) * t;
+	});
 
 	// "Docked" = the name has finished settling into the navbar. The docking
 	// motion completes at smooth 0.2, so we flag a touch past that. The spring
@@ -261,7 +297,7 @@ export function Hero() {
 						top: heroPaddingTop + imgH + 40,
 					}}
 				>
-					<h1 className="max-w-[30ch] text-balance font-display text-[clamp(1.75rem,4vw,3rem)] leading-[1.08] tracking-[-0.01em]">
+					<h1 className="max-w-[30ch] text-balance font-display text-[clamp(1.75rem,3.8vw,2.35rem)] leading-[1.08] tracking-[-0.01em]">
 						{hero.headline[locale]}
 					</h1>
 					<div className="flex flex-wrap items-center justify-center gap-6 pointer-events-auto ">
@@ -272,33 +308,50 @@ export function Hero() {
 						</Button>
 					</div>
 				</motion.div>
-
 			</div>
 
-			{/* Fixed name — position: fixed, transitions from hero bottom to navbar logo */}
+			{/* Fixed nav links — rest below the wordmark, dock into the navbar center */}
+			{!reduce && (
+				<motion.ul
+					className="pointer-events-none fixed top-0 left-0 right-0 z-[52] hidden items-center justify-center gap-6 md:flex"
+					style={{ y: linksY }}
+				>
+					{nav.items.map((item) => (
+						<li key={item.href} className="pointer-events-auto">
+							<WaveLink
+								href={item.href}
+								label={item.label[locale]}
+								className="font-display text-s uppercase text-muted-foreground transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 active:text-accent"
+							/>
+						</li>
+					))}
+				</motion.ul>
+			)}
+
+			{/* Fixed name — position: fixed, transitions from page top to navbar logo */}
 			{!reduce && (
 				<motion.div
-					className="fixed bottom-0 left-0 right-0 select-none pointer-events-none"
+					className="fixed top-0 left-0 right-0 select-none pointer-events-none"
 					style={{
 						y: nameY,
 						x: nameX,
 						scale: nameScale,
-						transformOrigin: '0% 100%',
+						transformOrigin: '0% 0%',
 						zIndex: 51,
 					}}
 				>
 					<h2
 						ref={nameWrapRef}
 						aria-label={hero.name}
-						className="relative inline-block whitespace-nowrap text-left font-wordmark uppercase leading-[0.72]"
+						className="relative inline-block whitespace-nowrap text-left font-body uppercase leading-[0.72]"
 						style={{ fontSize: `${nameFontVw}vw` }}
 					>
-						{/* Both wordmark words in Neue Haas Unica. Surname spans carry
-						    data-abbrev hooks the dock effect animates. */}
+						{/* Surname spans carry data-abbrev hooks the dock effect animates. */}
 						<span aria-hidden className="inline-flex items-end">
 							<span
-								className="font-wordmark mr-16"
+								className="font-display"
 								style={{
+									marginRight: '0.35em',
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
 								}}
@@ -307,7 +360,7 @@ export function Hero() {
 							</span>
 							<span
 								ref={scope}
-								className="relative inline-flex items-end font-wordmark"
+								className="relative inline-flex items-end font-display"
 								style={{
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
