@@ -54,7 +54,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html
-			lang="en"
+			lang="pt-BR"
 			className={`${ppneue.variable} ${geist.variable} h-full antialiased`}
 		>
 			<body className="min-h-full flex flex-col">

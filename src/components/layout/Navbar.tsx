@@ -51,7 +51,10 @@ function LocaleSwitch({ className }: { className?: string }) {
 				<ChevronDown
 					size={12}
 					strokeWidth={1.5}
-					className={cn('transition-transform duration-200', open && 'rotate-180')}
+					className={cn(
+						'transition-transform duration-200',
+						open && 'rotate-180',
+					)}
 				/>
 			</button>
 			{open && (
@@ -101,7 +104,7 @@ function NavCta({
 			href={nav.cta.href}
 			onClick={onClick}
 			className={cn(
-				'group flex items-stretch overflow-hidden rounded-[2px] bg-accent font-display text-xs uppercase tracking-[0.1em] text-accent-foreground',
+				'group flex items-stretch overflow-hidden bg-foreground font-display text-xs uppercase tracking-[0.1em] text-background',
 				'focus-visible:outline-2 focus-visible:outline-offset-2',
 				className,
 			)}
@@ -109,7 +112,7 @@ function NavCta({
 			<span className="flex flex-1 items-center px-4 py-2.5">
 				{nav.cta.label[locale]}
 			</span>
-			<span className="flex w-9 items-center justify-center bg-foreground text-background">
+			<span className="flex w-9 items-center justify-center border border-foreground bg-background text-foreground">
 				<ArrowRight
 					size={14}
 					strokeWidth={1.5}

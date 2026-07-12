@@ -123,7 +123,7 @@ function GalleryItem({
 				{/* Black wipe — collapses upward (origin top) to uncover the image. */}
 				{!reduce && (
 					<motion.div
-						className="absolute inset-0 origin-top bg-black"
+						className="absolute inset-0 origin-top bg-accent"
 						initial={{ scaleY: 1 }}
 						whileInView={{ scaleY: 0 }}
 						viewport={{ once: true, margin: '-80px' }}

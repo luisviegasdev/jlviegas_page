@@ -277,7 +277,7 @@ export function Hero() {
 								</h2>
 								<Button
 									asChild
-									className="pointer-events-auto h-12 px-6 text-base"
+									className="pointer-events-auto h-12 px-6 text-base bg-background text-foreground hover:bg-background/80"
 								>
 									<Link href={hero.primaryCta.href}>
 										{hero.primaryCta.label[locale]}
@@ -343,15 +343,15 @@ export function Hero() {
 					<h2
 						ref={nameWrapRef}
 						aria-label={hero.name}
-						className="relative inline-block whitespace-nowrap text-left font-body uppercase leading-[0.72]"
+						className="relative inline-block whitespace-nowrap text-left font-heading  uppercase leading-[0.72]"
 						style={{ fontSize: `${nameFontVw}vw` }}
 					>
 						{/* Surname spans carry data-abbrev hooks the dock effect animates. */}
 						<span aria-hidden className="inline-flex items-end">
 							<span
-								className="font-display"
+								className="font-heading"
 								style={{
-									marginRight: '0.35em',
+									marginRight: '0em',
 									textBoxTrim: 'trim-both',
 									textBoxEdge: 'cap alphabetic',
 								}}

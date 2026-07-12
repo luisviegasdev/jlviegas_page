@@ -11,7 +11,7 @@ type LocaleContextValue = {
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocale] = useState<Locale>("en");
+  const [locale, setLocale] = useState<Locale>("pt");
 
   useEffect(() => {
     document.documentElement.lang = locale === "en" ? "en" : "pt-BR";
