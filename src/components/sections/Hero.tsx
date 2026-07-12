@@ -63,19 +63,27 @@ export function Hero() {
 		mass: 0.35,
 	});
 
-	// Image natural dimensions (the starting size of the growing container)
-	const imgW = dims.w >= 768 ? 420 : 220;
-	const imgH = imgW * (9 / 16);
-	const stickyH = dims.h - 64; // 100svh minus navbar
+	// Panel height is MEASURED from the sticky div (100svh - navbar) rather
+	// than derived from window.innerHeight — the two disagree wherever
+	// innerHeight ≠ svh (mobile URL bars, embedded/headless viewports), and
+	// the CTA is pinned to the panel's CSS bottom, so the gap math must use
+	// the same height the CSS resolves.
+	const panelRef = useRef<HTMLDivElement>(null);
+	const [panelH, setPanelH] = useState(0);
+	useEffect(() => {
+		const el = panelRef.current;
+		if (!el) return;
+		const ro = new ResizeObserver(() => setPanelH(el.offsetHeight));
+		ro.observe(el);
+		setPanelH(el.offsetHeight);
+		return () => ro.disconnect();
+	}, []);
+	const stickyH = panelH || dims.h - 64; // 100svh minus navbar
 
 	// Target: full panel minus 16px horizontal / 8px vertical gaps — page
 	// background shows as the gap (growth is symmetric around the center)
 	const targetW = dims.w - 32;
 	const targetH = stickyH - 16;
-
-	// Container grows via width/height — not CSS scale
-	const containerW = useTransform(smooth, [0.04, 0.46], [imgW, targetW]);
-	const containerH = useTransform(smooth, [0.04, 0.46], [imgH, targetH]);
 
 	// Image fades out as the container grows, revealing the black layer beneath
 	const imageOpacity = useTransform(smooth, [0.08, 0.46], [1, 0]);
@@ -154,12 +162,52 @@ export function Hero() {
 		return rest + (linksYTarget - rest) * t;
 	});
 
-	// Vertical rhythm: the media container starts below the wordmark + links
-	// stack; the headline + CTA sit centered right below it. The image top
+	// Rest-layout vertical distribution: everything below the wordmark/links
+	// stack (image, headline, CTA) must fit inside the first viewport on ANY
+	// width/height — no scrolling to reach the CTA. The headline + CTA form a
+	// tight group (fixed textGap) pinned near the panel's bottom edge, and the
+	// leftover height is split into two EQUAL gaps (stack→image,
+	// image→headline). The headline height is measured (it wraps per
+	// width/locale); the image gives up height (keeping 16:9) when the
+	// viewport is too short for its natural size.
+	const h1Ref = useRef<HTMLHeadingElement>(null);
+	const [h1H, setH1H] = useState(72);
+	useEffect(() => {
+		const el = h1Ref.current;
+		if (!el) return;
+		const ro = new ResizeObserver(() => setH1H(el.offsetHeight));
+		ro.observe(el);
+		setH1H(el.offsetHeight);
+		return () => ro.disconnect();
+	}, []);
+
+	const linksVisible = dims.w >= 768; // links row is hidden below md
+	const topStackBottom = nameYHero + nameH + (linksVisible ? 24 + 22 : 0);
+	const ctaH = 48; // h-12 CTA button
+	const textGap = 24; // h1 ↔ CTA stay this close at every size (= gap-6)
+	const bottomMargin = 16; // CTA rest gap from the viewport bottom
+	const minGap = 16;
+	// Panel space left for the image plus the two equal gaps around it
+	const availForImage =
+		stickyH - (topStackBottom - 64) - h1H - textGap - ctaH - bottomMargin;
+	const naturalImgH = (dims.w >= 768 ? 420 : 220) * (9 / 16);
+	const fitsNaturally = availForImage - naturalImgH >= 2 * minGap;
+	const imgH = fitsNaturally
+		? naturalImgH
+		: Math.max(availForImage - 2 * minGap, 56);
+	const imgW = imgH * (16 / 9);
+	const restGap = fitsNaturally ? (availForImage - imgH) / 2 : minGap;
+
+	// Container grows via width/height — not CSS scale
+	const containerW = useTransform(smooth, [0.04, 0.46], [imgW, targetW]);
+	const containerH = useTransform(smooth, [0.04, 0.46], [imgH, targetH]);
+
+	// Vertical rhythm: the media container starts one gap below the wordmark +
+	// links stack; the headline + CTA follow at the same gap. The image top
 	// animates to 8px as it grows to full-bleed. Panel coords = viewport − 64
 	// (navbar). Kept in a MotionValue so the image drops into place as soon
 	// as the fitted wordmark height lands.
-	const heroPaddingTop = Math.round(linksRestY + 56 - 64);
+	const heroPaddingTop = Math.round(topStackBottom + restGap - 64);
 	const heroPadMv = useMotionValue(heroPaddingTop);
 	useEffect(() => {
 		heroPadMv.set(heroPaddingTop);
@@ -237,7 +285,7 @@ export function Hero() {
 	return (
 		<div ref={wrapperRef} className="relative" style={{ minHeight: '438vh' }}>
 			{/* Sticky panel — no overflow-hidden so page bg shows around the growing container */}
-			<div className="sticky top-16  h-[calc(100svh-4rem)] relative">
+			<div ref={panelRef} className="sticky top-16  h-[calc(100svh-4rem)] relative">
 				{/* Growing media container — horizontally centered, grows symmetrically */}
 				<motion.div
 					className="absolute left-1/2 z-10 overflow-hidden pointer-events-none"
@@ -288,16 +336,23 @@ export function Hero() {
 					)}
 				</motion.div>
 
-				{/* h1 + CTA — centered below the image (z-0, the growing image covers it) */}
+				{/* h1 + CTA — a tight group (gap-6 = textGap) pinned to the panel
+				    bottom, one equal gap below the image; justify-end keeps them
+				    together whatever the region's slack (z-0, the growing image
+				    covers it) */}
 				<motion.div
-					className="absolute inset-x-0 z-0 flex flex-col items-center gap-6 px-5 text-center pointer-events-none"
+					className="absolute inset-x-0 z-0 flex flex-col items-center justify-end gap-6 px-5 text-center pointer-events-none"
 					style={{
 						opacity: reduce ? undefined : textOpacity,
 						y: reduce ? undefined : textY,
-						top: heroPaddingTop + imgH + 40,
+						top: heroPaddingTop + imgH + restGap,
+						bottom: bottomMargin,
 					}}
 				>
-					<h1 className="max-w-[30ch] text-balance font-display text-[clamp(1.75rem,3.8vw,2.35rem)] leading-[1.08] tracking-[-0.01em]">
+					<h1
+						ref={h1Ref}
+						className="max-w-[30ch] text-balance font-display text-[clamp(1.3125rem,2.85vw,1.7625rem)] leading-[1.08] tracking-[-0.01em]"
+					>
 						{hero.headline[locale]}
 					</h1>
 					<div className="flex flex-wrap items-center justify-center gap-6 pointer-events-auto ">
